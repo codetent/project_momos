@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "memory_resource": "cpp",
+        "memory": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "chrono": "cpp"
+    },
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
+}

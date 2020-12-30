@@ -1,0 +1,30 @@
+?start : definition+
+
+?definition : state
+            | transition
+
+state         : "@state" identifier [ options ]
+transition    : "@transition" identifier "->" identifier [ options ]
+
+options       : "{" [ key_val_pair ( "," key_val_pair )* ","? ] "}"
+key_val_pair : identifier ":" (literal | options)
+
+?literal      : boolean | integer | float | character | string
+identifier    : NAME
+string        : "\"" STRING "\""
+character     : "'" CHAR "'"
+float         : SIGNED_FLOAT
+integer       : SIGNED_INT
+boolean       : BOOLEAN
+
+STRING         : /[\x21\x23-\x7E]+/
+CHAR           : /[\x21-\x26\x28-\x7E]/
+BOOLEAN        : "true" | "false"
+
+%import python.NAME
+
+%import common.SIGNED_INT
+%import common.SIGNED_FLOAT
+%import common.WS
+
+%ignore WS

@@ -1,0 +1,13 @@
+{% macro render_action_function_call(call) -%}
+    {{ call.symbol }}({{ call.args | join(', ') }});
+{%- endmacro %}
+
+{% macro render_action(step) -%}
+    {% set name = step.__class__.__name__ %}
+
+    {%- if name == 'FunctionCall' -%}
+    {{ render_action_function_call(step) }}
+    {%- else -%}
+    // no action found for {{ name }}
+    {%- endif -%}
+{%- endmacro %}
