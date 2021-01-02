@@ -1,8 +1,12 @@
-# Concept
+# Introduction
 
-<!---
-Add why protocol = state machine
--->
+## Protocols
+
+TODO: what
+
+## Protocol Structures
+
+TODO: why protocol = state machine
 
 ## State Machines
 
@@ -13,4 +17,23 @@ As state machines can be represented as graphs, the paper focuses only on the gr
 
 The connections between the states, called transitions, are coupled with an action. If the specified action occurs, one state transitions into another one. If there is no action, the system the current state remains the same. This demonstrates the storing capability of a state machine. It is also possible that a transition ends into the same state it is arisen from. This pattern is called cycle and is present in the most state machines. Cycles are problematic because they make it hard to predict the exact behavior especially regarding timing.
 
-A collection of states and their transitions ordered by there occurence is called path. Paths describe the traversable ways through the state machine. If there are cycles, the count of all paths is infinite because it is possible that a feedback transition is traversed multiple times. A simple state machine is a special case without any loops which contains a finite amount of paths. As cycles are a common element in normal state machines, the processing is done using simple paths. This special type of path does not contain any loop and is therefore much easier to process.
+A collection of states and their transitions ordered by there occurence is called path. Paths describe the traversable ways through the state machine. If there are cycles, the count of all paths is infinite because it is possible that a feedback transition is traversed multiple times. A simple state machine is a special case without any loops which contains a finite amount of paths. As cycles are a common element in normal state machines, the processing is done using simple paths. This special type of path does not contain any loop and is therefore much easier to process. Additionally, omitting the loops does not change the behavior of the state graph any further because a loop in a path is only executing some actions multiple times.
+
+## Graph Representations
+
+TODO: dot, ...
+
+## Graph Implementations
+
+TODO: code behind
+
+# Concept
+
+## Graph Definition
+
+## Graph Structure
+
+## Test Structure
+
+## Flow
+
