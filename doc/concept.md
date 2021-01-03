@@ -53,8 +53,6 @@ When developing software, the main focus is on the implementation work. Writing 
 
 To lower the barriers for developers getting a good documentation, the state-of-the-art way is generating one from existing documents, for example source code. Generation is usually done through adding annotations (mostly using comments) to the implementation which are then parsed and converted to a human-readable format like a PDF document. Additionally, modern tools support creating graphs of the components that are integrated into the result. If the documentation contains examples, which is highly preferred, these can also be automatically checked against their proper functioning.
 
-## Documentation Problems
-
 ## State of the Art
 
 # Concept
