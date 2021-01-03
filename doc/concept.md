@@ -49,7 +49,9 @@ Documentiation is crucial for developing understandable and maintainable softwar
 
 The required documents depend on the product and the targeted audience. A software component shall be shipped with an user guide describing the main concepts and how it can be integrated in another project. References are representing the existing interface and all the inputs and the resulting outputs. If the product is a user application, the reference is usually ommitted and the user guide contains the descriptions of the software.
 
-When developing software, the main focus is on the implementation work.
+When developing software, the main focus is on the implementation work. Writing guides is in the most cases not preferred by developers and therefore not much time is spent on it. Some companies are employing technical writers but as they are not the creator of a product, their insight or technical knowledge is limited.
+
+To lower the barriers for developers getting a good documentation, the state-of-the-art way is generating one from existing documents, for example source code. Generation is usually done through adding annotations (mostly using comments) to the implementation which are then parsed and converted to a human-readable format like a PDF document. Additionally, modern tools support creating graphs of the components that are integrated into the result. If the documentation contains examples, which is highly preferred, these can also be automatically checked against their proper functioning.
 
 ## Documentation Problems
 
