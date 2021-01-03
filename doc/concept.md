@@ -47,6 +47,10 @@ There are also other visual languages like DOT but especially designed for state
 
 Documentiation is crucial for developing understandable and maintainable software. In the most cases, good documentation is very rare and even some companies rely on the code only instead of having an explicit documentation unter the motto "our code is our documentation". But in short: "every engineer is also a writer" [\[4\]](https://developers.google.com/tech-writing) because a product or software component is useless if they target audience does not know how to use it.
 
+The required documents depend on the product and the targeted audience. A software component shall be shipped with an user guide describing the main concepts and how it can be integrated in another project. References are representing the existing interface and all the inputs and the resulting outputs. If the product is a user application, the reference is usually ommitted and the user guide contains the descriptions of the software.
+
+When developing software, the main focus is on the implementation work.
+
 ## Documentation Problems
 
 ## State of the Art
