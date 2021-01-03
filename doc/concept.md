@@ -45,7 +45,7 @@ There are also other visual languages like DOT but especially designed for state
 
 ## Code Documentation
 
-Documentiation is crucial for developing understandable and maintainable software. In the most cases, good documentation is very rare and even some companies rely on the code only instead of having an explicit documentation unter the motto "our code is our documentation". But in short: "every engineer is also a writer" [[\[4\]](https://developers.google.com/tech-writing) because a product or software component is useless if they target audience does not know how to use it.
+Documentiation is crucial for developing understandable and maintainable software. In the most cases, good documentation is very rare and even some companies rely on the code only instead of having an explicit documentation unter the motto "our code is our documentation". But in short: "every engineer is also a writer" [\[4\]](https://developers.google.com/tech-writing) because a product or software component is useless if they target audience does not know how to use it.
 
 ## Documentation Problems
 
