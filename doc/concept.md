@@ -45,7 +45,9 @@ There are also other visual languages like DOT but especially designed for state
 
 ## Code Documentation
 
-TODO: code behind
+Documentiation is crucial for developing understandable and maintainable software. In the most cases, good documentation is very rare and even some companies rely on the code only instead of having an explicit documentation unter the motto "our code is our documentation".
+
+## Documentation Problems
 
 ## State of the Art
 
