@@ -33,7 +33,9 @@ State graphs can be created using various graphical tools or code based:
 
 Graphical tools are especially usefull for creating state graphs from scratch or easily documenting previously existing state machines.
 
-TODO: graphical tools
+Tools like Lucidchard or draw.io are mainly intended for quickly visualizing graphical forms or structures without mainly focusing on state machines. They are usually equipped with toolboxes containing elementary forms for different diagram types like UML or simple flow charts. In general, the visualizations are exported to common image formats for placing them manually in documentations.
+
+Specialized tooling for state machines also exists like YAKINDU state chart tools or JFLAP. This software provides beside the visualization features for editing state machines and checking for their functionality. Additionally, these tools ship with a simulator which allows running the state machine inside the suite.
 
 Code based approaches are typically used for creating graphics in various formats or processing them further for any other purpose. The advantage compared to graphical tools is that this process can be automated. Additionally, the output is not depending on the user of a tool, but rather it is deterministic. In general, all tools for creating graphs can be utilized for this application.
 
