@@ -1,5 +1,5 @@
-<p align="center" style="background: white; padding: 10px;">
-    <img src="./doc/momos.svg" height=120/>
+<p align="center" style="">
+    <img src="./doc/momos_header.svg"/>
 </p>
 <br>
 
