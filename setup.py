@@ -27,8 +27,8 @@ setup(
     package_data={
         'momos': [
             'parser/grammar.lark',
-            'libraries/**/*',
-            'templates/**/*',
+            'libraries/*/*/*',
+            'templates/*/*',
         ],
     },
 )
