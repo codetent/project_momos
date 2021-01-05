@@ -3,8 +3,10 @@
 <svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 566.9 170.1" enable-background="new 0 0 566.9 170.1" xml:space="preserve">
 <radialGradient id="XMLID_464_" cx="282.4646" cy="86.0394" r="300.2876" gradientUnits="userSpaceOnUse">
-	<stop  offset="0" style="stop-color:#9B9593;stop-opacity:0"/>
-	<stop  offset="1" style="stop-color:#AAA3A1;stop-opacity:0.95"/>
+	<stop  offset="0" style="stop-color:#F6F6F6"/>
+	<stop  offset="0.2476" style="stop-color:#E4E4E4"/>
+	<stop  offset="0.7679" style="stop-color:#B6B5B5"/>
+	<stop  offset="1" style="stop-color:#9D9D9C"/>
 </radialGradient>
 <rect id="XMLID_440_" fill="url(#XMLID_464_)" width="566.9" height="170.1"/>
 <g id="XMLID_391_">
