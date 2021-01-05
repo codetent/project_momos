@@ -46,7 +46,7 @@ def build(input_file, output_file, state_var, data_type, fn_init, fn_update, fn_
     output_file.write_text(text)
 
 
-if __name__ == '__main__':
+def run():
     main.add_command(build)
     main.add_command(graph)
     main()

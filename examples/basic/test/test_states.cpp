@@ -5,9 +5,9 @@
 extern "C"
 {
     #include "unistd.h"
+    #include "src/states.c"
     #include "messages.h"
     #include "logic.h"
-    #include "../src/states.c"
 }
 
 auto &interface = TestInterface<int>::get_instance();
