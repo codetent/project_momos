@@ -1,13 +1,13 @@
-from functools import singledispatch, reduce
+from functools import reduce, singledispatch
+from operator import or_
 from pathlib import Path
 from typing import Set
-from operator import or_
 
 from jinja2 import FileSystemLoader
 from jinja2.environment import Environment
 
 from .components.mode import FailureMode
-from .suite import TestCase, TestSuite, TestStep
+from .suite import TestCase, TestStep, TestSuite
 from .utils import ExternalElement
 
 

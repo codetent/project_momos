@@ -1,9 +1,7 @@
-from contextlib import suppress
 from pathlib import Path
 
 from comment_parser.comment_parser import extract_comments
 from lark import Lark, Transformer
-from lark.exceptions import UnexpectedInput, UnexpectedEOF
 
 from ..components import FunctionCall, State, Transition, Trigger
 from ..graph import StateGraph
@@ -63,10 +61,10 @@ def parse_file(file_path: Path) -> StateGraph:
     definitions = []
 
     for comment in extract_comments(file_path):
-        comment_lines = [l.strip(' *') for l in comment.text().split('\n')]
+        comment_lines = [line.strip(' *') for line in comment.text().split('\n')]
 
         for line in comment_lines:
-            #with suppress(UnexpectedInput, UnexpectedEOF):
+            # with suppress(UnexpectedInput, UnexpectedEOF):
             try:
                 ast = parser.parse(line)
                 element = transformer.transform(ast)

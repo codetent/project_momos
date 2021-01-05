@@ -35,19 +35,17 @@ def graph(input_file, output_file):
 @click.option('--fn-init', type=click.STRING)
 @click.option('--fn-update', type=click.STRING)
 @click.option('--fn-close', type=click.STRING)
-def build(input_file, output_file, state_var, data_type, fn_init, fn_update,
-          fn_close):
+def build(input_file, output_file, state_var, data_type, fn_init, fn_update, fn_close):
     input_file = Path(input_file)
     output_file = Path(output_file)
 
     graph = parse_file(input_file)
-    suite = TestSuite.of(
-        graph,
-        state_var=ExternalElement.of(state_var),
-        data_type=ExternalElement.of(data_type),
-        fn_init=ExternalElement.of(fn_init) if fn_init else None,
-        fn_update=ExternalElement.of(fn_update) if fn_update else None,
-        fn_close=ExternalElement.of(fn_close) if fn_close else None)
+    suite = TestSuite.of(graph,
+                         state_var=ExternalElement.of(state_var),
+                         data_type=ExternalElement.of(data_type),
+                         fn_init=ExternalElement.of(fn_init) if fn_init else None,
+                         fn_update=ExternalElement.of(fn_update) if fn_update else None,
+                         fn_close=ExternalElement.of(fn_close) if fn_close else None)
 
     generator = CodeGenerator()
     text = generator.generate(suite)

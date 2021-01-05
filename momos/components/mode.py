@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import inspect
 from functools import partial
 from typing import Any, Callable
