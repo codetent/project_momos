@@ -1,6 +1,0 @@
-strict digraph  {
-"State(id='STATE_RECEIVING', initial=True)" [height="0.5", label="", shape=point, width="0.5", xlabel=STATE_RECEIVING];
-"State(id='STATE_SENDING', initial=False)" [label=STATE_SENDING, shape=box];
-"State(id='STATE_RECEIVING', initial=True)" -> "State(id='STATE_SENDING', initial=False)"  [label=receive];
-"State(id='STATE_SENDING', initial=False)" -> "State(id='STATE_RECEIVING', initial=True)"  [label=timeout];
-}
