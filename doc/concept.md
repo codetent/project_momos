@@ -71,9 +71,23 @@ If it is the case that the protocol implementation requires transition triggers 
 
 Generating test cases is not the only target of this approach. It also simplifies documenting the protocol implementation. For this, the state graph build by the annotations can be converted to an image which can be included in the final code documentation. If there is no extra documentation, the annotations itself will also help developers to understand the implemented state machine.
 
+## System Overview
+
 ## Graph Definition
 
+The state machine is defined using comments in the source code file. The content of this comments is called annotations because it consists of metainformation parsed by the generation tool. These comments must be added by the developer to the implementation and should serve als general code documentation too. Therefore, the comments must be readable by a software and humans.
 
+There are different formats for specifing graphs like state machines as plain text. Several types were analyzed for this paper. The overall problem concerning all these languages is that they are not specifially created for such an application. They are mainly focused on a readable export format for other tools or as human-readable method for creating simple graphs. Of course, they all can be utilized for this purpose but then there will be some problems:
+
+If the state machine is written in languages like DOT, the user has to write rather illogicial expressions, easy understandable if you remember that you are describing an image and perfectly suited for machines. But, you will not write this comments if you are just describing a state machine implementation. This totally affects the readability of the approach. Adding this annotations should be as simple and intuitiv as possible, because if the hurdle is too high for developers, creating this comments will be neglected and the method will not be utilized for the project.
+
+If it requires more comments to describe the state machine compared to the lines of code of the actual implementation, the source code file will be polluted with comments and developers will mainly spend their time to write these annotations. Defining a graph with common languages requires beside of the definition of the states, a list of all the transitions. This specification has to be a single comment, because the language then takes this single block and converts it to the graph. Therefore, this languages are not the perfect tool for source code annotation because adding additional comments where the states are defined or the transitions are made is much more intuitive for the developers.
+
+As the graph languages are designed for describing nodes and edges only. This is perfectly fine defining states and transitions of a state graph but this information is too less for creating test cases out of it. Transitions must be coupled with a trigger to set when the condition when it transitions to another state. Besides, there must be the option to add additional information about a transition like the time value for timed transitions. Common graph languages do not provide a way to set this per default. Instead this values can be set as additional styling options or as the label of the element. This requires an additional syntax (or language) which specifies the format and which have to be parsed.
+
+Because of all these drawbacks, and there is no way around creating some custom format, an own domain specific language is created especially for this application.
+
+### Custom Domain Specific Language
 
 ## Graph Structure
 
