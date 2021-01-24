@@ -2,6 +2,8 @@
 
 # Introduction
 
+## Motivation
+
 ## Implementation Testing
 
 ## Test Case Selection
@@ -59,10 +61,29 @@ To lower the barriers for developers getting a good documentation, the state-of-
 
 # Concept
 
+This paper describes a method for generating test cases automatically for testing protocol implementations based on finite state machines. For this the approach uses code annotations of the implementation using comments. The target of this annotations is providing a machine-readable format while keeping them readable for other developers. In general, these comments shall integrate nicely into the source code without disclosing that they are parsed by software.
+
+For generating the test cases, the code annotations are extracted and analyzed. Afterwards, a state graph is built using the information gained through the annotations. The graph is then split into its flow paths. Each of the state transitions of a path is coupled with a predefined trigger which lists all possible failure modes for its type. Using this failure mode collection of all transitions, a test case is generated for each failure mode and path. Additionally, test cases are created for checking a non-failing path for checking if the code annotations are correct. After generating the test suite, all test cases are analyzed and the ones most likely to fail are selected. This threshold can be set by the tester.
+
+Since there are already some popular test runner tools like Google Test, this method is designed to work perfectly together with this existing tooling. It allows the selection of a predefined test code flavor and additional custom ones can be added by the user. The approach does not run any test by itself. For this, a test runner is required and must be setup by the user. The only available interface to the test case generator tool is a developed command line interface which allows specifying parameters for customizing the oputput. Tests written in C or any other compiled language require compiling before they can be executed. For this case, the generation tool can be called manually before compiling the test code or some tools like cmake also allow executing of a program before the compilation is started.
+
+Generating test cases is not the only target of this approach. It also simplifies documenting the protocol implementation. For this, the state graph build by the annotations can be converted to an image which can be included in the final code documentation. If there is no extra documentation, the annotations itself will also help developers to understand the implemented state machine.
+
 ## Graph Definition
+
+
 
 ## Graph Structure
 
 ## Test Structure
 
 ## Flow
+
+## Reference
+
+[1]: C. Bourhfir et. al., Automatic executable test case generation for extended finite state machine protocols, 1997
+
+[2]: Tae-hyong Kim et. al., Automatic Test Case Generation of Real Protocols: Framework and Methodology, 1998
+
+[3]: C. Bourhfir et. al., A guided incremental test case generation procedure for conformance testing for CEFSM specified protocols, 1998
+
