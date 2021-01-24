@@ -67,6 +67,8 @@ For generating the test cases, the code annotations are extracted and analyzed. 
 
 Since there are already some popular test runner tools like Google Test, this method is designed to work perfectly together with this existing tooling. It allows the selection of a predefined test code flavor and additional custom ones can be added by the user. The approach does not run any test by itself. For this, a test runner is required and must be setup by the user. The only available interface to the test case generator tool is a developed command line interface which allows specifying parameters for customizing the oputput. Tests written in C or any other compiled language require compiling before they can be executed. For this case, the generation tool can be called manually before compiling the test code or some tools like cmake also allow executing of a program before the compilation is started.
 
+If it is the case that the protocol implementation requires transition triggers not covered with the ones shipped with the generation tool. Custom triggers shall be supported by defining them via a Python plugin system.
+
 Generating test cases is not the only target of this approach. It also simplifies documenting the protocol implementation. For this, the state graph build by the annotations can be converted to an image which can be included in the final code documentation. If there is no extra documentation, the annotations itself will also help developers to understand the implemented state machine.
 
 ## Graph Definition
