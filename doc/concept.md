@@ -2,6 +2,8 @@
 
 # Introduction
 
+## Motivation
+
 ## Implementation Testing
 
 ## Test Case Selection
@@ -59,10 +61,45 @@ To lower the barriers for developers getting a good documentation, the state-of-
 
 # Concept
 
+This paper describes a method for generating test cases automatically for testing protocol implementations based on finite state machines. For this the approach uses code annotations of the implementation using comments. The target of this annotations is providing a machine-readable format while keeping them readable for other developers. In general, these comments shall integrate nicely into the source code without disclosing that they are parsed by software.
+
+For generating the test cases, the code annotations are extracted and analyzed. Afterwards, a state graph is built using the information gained through the annotations. The graph is then split into its flow paths. Each of the state transitions of a path is coupled with a predefined trigger which lists all possible failure modes for its type. Using this failure mode collection of all transitions, a test case is generated for each failure mode and path. Additionally, test cases are created for checking a non-failing path for checking if the code annotations are correct. After generating the test suite, all test cases are analyzed and the ones most likely to fail are selected. This threshold can be set by the tester.
+
+Since there are already some popular test runner tools like Google Test, this method is designed to work perfectly together with this existing tooling. It allows the selection of a predefined test code flavor and additional custom ones can be added by the user. The approach does not run any test by itself. For this, a test runner is required and must be setup by the user. The only available interface to the test case generator tool is a developed command line interface which allows specifying parameters for customizing the oputput. Tests written in C or any other compiled language require compiling before they can be executed. For this case, the generation tool can be called manually before compiling the test code or some tools like cmake also allow executing of a program before the compilation is started.
+
+If it is the case that the protocol implementation requires transition triggers not covered with the ones shipped with the generation tool. Custom triggers shall be supported by defining them via a Python plugin system.
+
+Generating test cases is not the only target of this approach. It also simplifies documenting the protocol implementation. For this, the state graph build by the annotations can be converted to an image which can be included in the final code documentation. If there is no extra documentation, the annotations itself will also help developers to understand the implemented state machine.
+
+## System Overview
+
 ## Graph Definition
+
+The state machine is defined using comments in the source code file. The content of this comments is called annotations because it consists of metainformation parsed by the generation tool. These comments must be added by the developer to the implementation and should serve als general code documentation too. Therefore, the comments must be readable by a software and humans.
+
+There are different formats for specifing graphs like state machines as plain text. Several types were analyzed for this paper. The overall problem concerning all these languages is that they are not specifially created for such an application. They are mainly focused on a readable export format for other tools or as human-readable method for creating simple graphs. Of course, they all can be utilized for this purpose but then there will be some problems:
+
+If the state machine is written in languages like DOT, the user has to write rather illogicial expressions, easy understandable if you remember that you are describing an image and perfectly suited for machines. But, you will not write this comments if you are just describing a state machine implementation. This totally affects the readability of the approach. Adding this annotations should be as simple and intuitiv as possible, because if the hurdle is too high for developers, creating this comments will be neglected and the method will not be utilized for the project.
+
+If it requires more comments to describe the state machine compared to the lines of code of the actual implementation, the source code file will be polluted with comments and developers will mainly spend their time to write these annotations. Defining a graph with common languages requires beside of the definition of the states, a list of all the transitions. This specification has to be a single comment, because the language then takes this single block and converts it to the graph. Therefore, this languages are not the perfect tool for source code annotation because adding additional comments where the states are defined or the transitions are made is much more intuitive for the developers.
+
+As the graph languages are designed for describing nodes and edges only. This is perfectly fine defining states and transitions of a state graph but this information is too less for creating test cases out of it. Transitions must be coupled with a trigger to set when the condition when it transitions to another state. Besides, there must be the option to add additional information about a transition like the time value for timed transitions. Common graph languages do not provide a way to set this per default. Instead this values can be set as additional styling options or as the label of the element. This requires an additional syntax (or language) which specifies the format and which have to be parsed.
+
+Because of all these drawbacks, and there is no way around creating some custom format, an own domain specific language is created especially for this application.
+
+### Custom Domain Specific Language
 
 ## Graph Structure
 
 ## Test Structure
 
 ## Flow
+
+## Reference
+
+[1]: C. Bourhfir et. al., Automatic executable test case generation for extended finite state machine protocols, 1997
+
+[2]: Tae-hyong Kim et. al., Automatic Test Case Generation of Real Protocols: Framework and Methodology, 1998
+
+[3]: C. Bourhfir et. al., A guided incremental test case generation procedure for conformance testing for CEFSM specified protocols, 1998
+
