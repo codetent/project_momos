@@ -1,4 +1,5 @@
 /examples/basic/test/test_*.cpp
+poetry.lock
 
 # Created by https://www.toptal.com/developers/gitignore/api/cmake,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=cmake,python
