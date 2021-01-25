@@ -19,7 +19,7 @@ class UnboundFailureMode:
         """
         return inspect.getdoc(self.generator).strip()
 
-    def bind(self, instance: Any) -> FailureMode:
+    def _bind(self, instance: Any) -> FailureMode:
         """Bind failure mode to trigger instance.
         """
         return FailureMode(generator=self.generator, requires=self.requires, fails=self.fails, instance=instance)
@@ -43,6 +43,20 @@ class FailureMode(UnboundFailureMode):
         if not callable(self.requires):
             return True
         return self.requires(self.instance)
+
+
+class FailureModeResolver:
+    def __new__(cls, *args, **kwargs):
+        instance = super().__new__(cls)
+        instance._failure_modes = {}
+
+        for key, value in cls.__dict__.items():
+            if isinstance(value, UnboundFailureMode):
+                bound = value._bind(instance)
+                setattr(instance, key, bound)
+                instance._failure_modes[key] = bound
+
+        return instance
 
 
 def failure_mode(wrapped: Callable = None, *args, **kwargs) -> UnboundFailureMode:

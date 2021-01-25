@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from comment_parser.comment_parser import extract_comments
+from comment_parser.comment_parser import extract_comments_from_str
 from lark import Lark, Transformer
 
 from ..components import FunctionCall, State, Transition, Trigger
@@ -53,14 +53,14 @@ class GrammarTransformer(Transformer):
         return items[0] == 'true'
 
 
-def parse_file(file_path: Path) -> StateGraph:
+def parse(text: str) -> StateGraph:
     grammer_path = Path(__file__).parent / 'grammar.lark'
     parser = Lark(grammer_path.read_text())
     transformer = GrammarTransformer()
 
     definitions = []
 
-    for comment in extract_comments(file_path):
+    for comment in extract_comments_from_str(text, mime='text/x-c'):
         comment_lines = [line.strip(' *') for line in comment.text().split('\n')]
 
         for line in comment_lines:
@@ -74,3 +74,8 @@ def parse_file(file_path: Path) -> StateGraph:
 
     Resolvable.resolve_all(definitions)
     return StateGraph.of(definitions)
+
+
+def parse_file(file_path: Path) -> StateGraph:
+    grammer_path = Path(__file__).parent / 'grammar.lark'
+    return parse(grammer_path.read_text())

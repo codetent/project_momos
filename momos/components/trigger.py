@@ -6,25 +6,13 @@ from pathlib import Path
 from typing import Optional
 
 from .action import FunctionCall
-from .mode import UnboundFailureMode, failure_mode
+from .mode import FailureModeResolver, failure_mode
 
 TRIGGER_IMPLS = {}
 
 
 @dataclass
-class Trigger(ABC):
-    def __new__(cls, *args, **kwargs):
-        instance = super().__new__(cls)
-        instance._failure_modes = {}
-
-        for key, value in cls.__dict__.items():
-            if isinstance(value, UnboundFailureMode):
-                bound = value.bind(instance)
-                setattr(instance, key, bound)
-                instance._failure_modes[key] = bound
-
-        return instance
-
+class Trigger(FailureModeResolver, ABC):
     def __init_subclass__(cls, *, short_name: Optional[str]):
         TRIGGER_IMPLS[short_name] = cls
         cls.id = short_name
@@ -34,7 +22,7 @@ class Trigger(ABC):
         return {k: m for k, m in self._failure_modes.items() if m.possible}
 
     @staticmethod
-    def of(name: Optional[str], **kwargs):
+    def of(name: Optional[str] = None, **kwargs):
         trigger_cls = TRIGGER_IMPLS[name]
         return trigger_cls(**kwargs)
 

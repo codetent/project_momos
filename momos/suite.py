@@ -77,8 +77,8 @@ class TestSuite:
     cases: List[TestCase] = field(default_factory=list)
 
     @classmethod
-    def of(cls, graph: StateGraph, **metadata) -> TestSuite:
-        metadata = TestSuiteMetadata(**metadata)
+    def of(cls, graph: StateGraph, *, state_var: ExternalElement, data_type: ExternalElement, **kwargs) -> TestSuite:
+        metadata = TestSuiteMetadata(state_var=state_var, data_type=data_type, **kwargs)
         suite = cls(metadata=metadata)
         paths = get_simple_paths(graph)
 

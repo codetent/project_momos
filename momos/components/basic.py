@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from dataclasses import dataclass, field
 
 from ..utils import Resolvable
-
-if TYPE_CHECKING:
-    from .trigger import Trigger
+from .trigger import Trigger
 
 
 @dataclass(frozen=True)
@@ -19,4 +16,4 @@ class State:
 class Transition(Resolvable):
     from_state: State
     to_state: State
-    trigger: Trigger = None
+    trigger: Trigger = field(default_factory=Trigger.of)
