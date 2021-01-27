@@ -77,5 +77,4 @@ def parse(text: str) -> StateGraph:
 
 
 def parse_file(file_path: Path) -> StateGraph:
-    grammer_path = Path(__file__).parent / 'grammar.lark'
-    return parse(grammer_path.read_text())
+    return parse(file_path.read_text())

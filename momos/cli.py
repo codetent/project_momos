@@ -20,15 +20,18 @@ def include(flavor):
 
 
 @click.command('graph')
-@click.option('-i', '--input-file', type=click.Path(), required=True)
+@click.option('-i', '--input-file', type=click.Path(exists=False), required=True)
 @click.option('-o', '--output-file', type=click.Path(), required=True)
 def graph(input_file, output_file):
+    input_file = Path(input_file)
+    output_file = Path(output_file)
+
     graph = parse_file(input_file)
     graph.save(output_file)
 
 
 @click.command('build')
-@click.option('-i', '--input-file', type=click.Path(), required=True)
+@click.option('-i', '--input-file', type=click.Path(exists=False), required=True)
 @click.option('-o', '--output-file', type=click.Path(), required=True)
 @click.option('--state-var', type=click.STRING, required=True)
 @click.option('--data-type', type=click.STRING, required=True)
