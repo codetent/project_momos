@@ -23,6 +23,7 @@ networkx = "^2.5"
 pydot = "^1.4.1"
 case_converter = "^1.0.2"
 lark = "^0.11.1"
+wrapt = "^1.12.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.2"

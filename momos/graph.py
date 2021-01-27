@@ -4,7 +4,14 @@ from pathlib import Path
 import networkx as nx
 from networkx.drawing.nx_pydot import write_dot
 
+from wrapt import ObjectProxy
+
 from .components import State, Transition
+
+
+class StateNodeProxy(ObjectProxy):
+    def __str__(self):
+        return self.__wrapped__.id
 
 
 class StateGraph:
@@ -28,16 +35,15 @@ class StateGraph:
             node_kwargs['xlabel'] = state.id
 
         self.states.append(state)
-        self.graph.add_node(state, **node_kwargs)
+        self.graph.add_node(StateNodeProxy(state), **node_kwargs)
 
     def add_transition(self, transition: Transition):
         self.transitions.append(transition)
-
-        kwargs = {}
-        if transition.trigger:
-            kwargs['label'] = transition.trigger.id
-
-        self.graph.add_edge(transition.from_state, transition.to_state, **kwargs)
+        self.graph.add_edge(
+            StateNodeProxy(transition.from_state),
+            StateNodeProxy(transition.to_state),
+            label=(transition.trigger.id or ''),
+        )
 
     def save(self, path: Path):
         write_dot(self.graph, path)
