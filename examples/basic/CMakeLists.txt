@@ -39,14 +39,16 @@ add_custom_command(OUTPUT ../test/test_states.cpp
                    WORKING_DIRECTORY ..
                    VERBATIM)
 execute_process(COMMAND momos include gtest
-                OUTPUT_VARIABLE MOMOS_INCLUDE)
+                OUTPUT_VARIABLE MOMOS_INCLUDE
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
 message("Momos include path: ${MOMOS_INCLUDE}")
 
 add_executable(tests test/main.cpp
                      test/test_states.cpp
                      test/mocks/hal_mock.cpp
                      src/messages.c
-                     src/logic.c)
+                     src/logic.c
+                     ${MOMOS_INCLUDE}/momos/io.cpp)
 target_include_directories(tests PRIVATE "${MOMOS_INCLUDE}")
 target_link_libraries(tests gmock
                             gtest

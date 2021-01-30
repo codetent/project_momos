@@ -1,6 +1,6 @@
 
 #include <stdio.h>
-#include "momos/testif.hpp"
+#include "momos/io.hpp"
 
 extern "C"
 {
@@ -9,12 +9,11 @@ extern "C"
 
 void transmit(int a)
 {
-    TestInterface<int> &interface = TestInterface<int>::get_instance();
-    interface.transmit(&a, 1U, NULL);
+    io::in.provide(&a, (uint32_t)sizeof(int), 0U);
 }
 
 bool receive(int *a)
 {
-    TestInterface<int> &interface = TestInterface<int>::get_instance();
-    return interface.receive(a, NULL, NULL);
+    uint32_t length;
+    return io::out.request(a, &length, NULL);
 }

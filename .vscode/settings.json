@@ -4,7 +4,20 @@
         "memory": "cpp",
         "tuple": "cpp",
         "type_traits": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "string": "cpp",
+        "vector": "cpp",
+        "list": "cpp",
+        "*.tcc": "cpp",
+        "optional": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "ratio": "cpp",
+        "system_error": "cpp",
+        "array": "cpp",
+        "functional": "cpp",
+        "utility": "cpp",
+        "random": "cpp"
     },
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }

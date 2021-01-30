@@ -1,60 +1,42 @@
-{% import "actions.j2" as actions %}
-{% import "processors.j2" as processors %}
 #include <gtest/gtest.h>
-#include "momos/builder.hpp"
-#include "momos/testif.hpp"
 
-extern "C"
-{
-    {% for inc in includes | sort(reverse=True) %}
-    #include "{{ inc }}"
-    {% endfor %}
-}
-
-auto &interface = TestInterface<{{ suite.metadata.data_type.symbol }}>::get_instance();
+#include "momos/io.hpp"
+#include "momos/macros.hpp"
 
 class StateTest : public ::testing::Test
 {
 protected:
-    void SetUp() override {
-        interface.reset();
+    void SetUp() override
+    {
+        io::in.reset();
+        io::out.reset();
 
-        {% if suite.metadata.fn_init %}
-        {{ suite.metadata.fn_init.symbol }}();
-        {% endif %}
-        {% if suite.metadata.fn_update %}
-        {{ suite.metadata.fn_update.symbol }}();
-        {% endif %}
+        HOOK_RUN(init);
     }
 
-    void TearDown() override {
-        {% if suite.metadata.fn_close %}
-        {{ suite.metadata.fn_close.symbol }}();
-        {% endif %}
+    void TearDown() override
+    {
+        HOOK_RUN(deinit);
     }
 };
-
 
 {% for case in suite.cases %}
 TEST_F(StateTest, {{ case.id }})
 {
     {% for step in case.steps %}
+    {% set from_state = step.transition.from_state %}
+    {% set to_state = step.transition.to_state %}
+
     // [Step {{ loop.index }}]: {{ step.description }} ----------
-    ASSERT_EQ({{ suite.metadata.state_var.symbol }}, {{ step.transition.from_state.id }});
+    ASSERT_EQ(STATE_GET(), {{ from_state.id }});
 
-    {% for action in step.actions %}
-    {{ actions.render_action(action) }}
-    {{ processors.render_processor(step.transition) }}
-    {% endfor %}
-
-    {% if suite.metadata.fn_update %}
-    {{ suite.metadata.fn_update.symbol }}();
-    {% endif %}
+    TRANSITION_RUN({{ from_state.id }}, {{ to_state.id }}, NULL);
+    HOOK_RUN(update);
 
     {% if step.mode.fails %}
-    ASSERT_NE({{ suite.metadata.state_var.symbol }}, {{ step.transition.to_state.id }});
+    ASSERT_NE(STATE_GET(), {{ to_state.id }});
     {% else %}
-    ASSERT_EQ({{ suite.metadata.state_var.symbol }}, {{ step.transition.to_state.id }});
+    ASSERT_EQ(STATE_GET(), {{ to_state.id }});
     {% endif %}
 
     {% endfor %}
