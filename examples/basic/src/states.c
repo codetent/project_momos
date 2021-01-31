@@ -17,7 +17,7 @@ void states_init(void)
 
 void states_update(void)
 {
-    // @transition STATE_RECEIVING -> STATE_SENDING { trigger: {type: "receive", builder: "messages.h:send_message(7)", count_sensitive: false} }
+    // @transition STATE_RECEIVING -> STATE_SENDING { trigger: "receive", count_sensitive: false }
     current_state = STATE_SENDING;
 }
 
@@ -25,7 +25,7 @@ void states_run(void)
 {
     switch (current_state)
     {
-    case STATE_RECEIVING: // @state STATE_RECEIVING {initial: true}
+    case STATE_RECEIVING: // @state STATE_RECEIVING { initial: true }
         printf("state: receiving\n");
         next_time = time(0) + 2U;
         break;
@@ -35,7 +35,7 @@ void states_run(void)
 
         if (time(0) >= next_time)
         {
-            current_state = STATE_RECEIVING; // @transition STATE_SENDING -> STATE_RECEIVING { trigger: {type: "timeout", value: 2} }
+            current_state = STATE_RECEIVING; // @transition STATE_SENDING -> STATE_RECEIVING { trigger: "timeout", value: 2 }
         }
         break;
     }

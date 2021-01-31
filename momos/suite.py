@@ -10,7 +10,6 @@ from networkx.utils import pairwise
 from .components import State, Transition
 from .components.mode import FailureMode
 from .graph import StateGraph
-from .utils import ExternalElement
 
 
 def get_transition(state_graph: StateGraph, from_state: State, to_state: State) -> Transition:
@@ -63,23 +62,12 @@ class TestCase:
 
 
 @dataclass
-class TestSuiteMetadata:
-    state_var: ExternalElement
-    data_type: ExternalElement
-    fn_init: ExternalElement = None
-    fn_update: ExternalElement = None
-    fn_close: ExternalElement = None
-
-
-@dataclass
 class TestSuite:
-    metadata: TestSuiteMetadata
     cases: List[TestCase] = field(default_factory=list)
 
     @classmethod
-    def of(cls, graph: StateGraph, *, state_var: ExternalElement, data_type: ExternalElement, **kwargs) -> TestSuite:
-        metadata = TestSuiteMetadata(state_var=state_var, data_type=data_type, **kwargs)
-        suite = cls(metadata=metadata)
+    def of(cls, graph: StateGraph) -> TestSuite:
+        suite = cls()
         paths = get_simple_paths(graph)
 
         for path in paths:

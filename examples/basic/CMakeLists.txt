@@ -30,11 +30,8 @@ include(GoogleTest)
 add_custom_command(OUTPUT ../test/test_states.cpp
                    COMMAND momos build
                            -i src/states.c
+                           -b test/base_states.cpp
                            -o test/test_states.cpp
-                           --state-var ../src/states.c:current_state
-                           --data-type int
-                           --fn-init logic.h:logic_init
-                           --fn-update logic.h:logic_run
                    COMMENT "Generating state machine tests"
                    WORKING_DIRECTORY ..
                    VERBATIM)

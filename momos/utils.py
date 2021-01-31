@@ -1,7 +1,5 @@
 from contextlib import suppress
-from dataclasses import asdict, dataclass
-from pathlib import Path
-from typing import Union
+from dataclasses import asdict
 
 
 class Resolvable:
@@ -28,21 +26,3 @@ class Resolvable:
         for key, value in asdict(self).items():
             with suppress(TypeError):
                 setattr(self, key, value(items))
-
-
-@dataclass
-class ExternalElement:
-    symbol: str
-    location: Path = None
-
-    @classmethod
-    def of(cls, definition: Union[str, 'ExternalElement']):
-        if isinstance(definition, ExternalElement):
-            return definition
-
-        try:
-            path, element = definition.split(':')
-        except ValueError:
-            return cls(symbol=definition)
-        else:
-            return cls(location=Path(path), symbol=element)

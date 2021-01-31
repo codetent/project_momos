@@ -2,10 +2,8 @@ from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Optional
 
-from .action import FunctionCall
 from .mode import FailureModeResolver, failure_mode
 
 TRIGGER_IMPLS = {}
@@ -33,78 +31,71 @@ class DummyTrigger(Trigger, short_name=None):
     def ok(self) -> None:
         """Do nothing.
         """
-        return None
+        return []
 
 
 @dataclass
 class TimeoutTrigger(Trigger, short_name='timeout'):
     value: int
 
-    def _create_call(self, value: int) -> FunctionCall:
-        return FunctionCall(symbol='sleep', location=Path('unistd.h'), args=[value])
-
     @failure_mode(fails=False)
     def ok(self) -> int:
         """Timeout equals expected value.
         """
-        return [self._create_call(self.value)]
+        return [self.value]
 
     @failure_mode
     def earlier(self) -> int:
         """Timeout less than expected.
         """
-        return [self._create_call(round(self.value * 0.1))]
+        return [self.value * 0.1]
 
     @failure_mode(fails=False)
     def later(self) -> int:
         """Timeout greater than expected.
         """
-        return [self._create_call(round(self.value * 1.9))]
+        return [self.value * 1.9]
 
 
 @dataclass
 class ReceiveTrigger(Trigger, short_name='receive'):
-    builder: FunctionCall
     count: int = 1
     count_sensitive: bool = True
-
-    def __post_init__(self):
-        self.builder = FunctionCall.of(self.builder)
 
     @failure_mode(fails=False)
     def ok(self):
         """Expected is received.
         """
-        return [self.builder]
+        return [None]
 
     @failure_mode
     def no(self):
         """No message is received.
         """
-        return None
+        return []
 
     @failure_mode(requires=lambda self: self.count_sensitive)
     def more(self):
         """More messages are received than expected.
         """
-        return [self.builder] * round(self.count * 1.5)
+        return [None] * round(self.count * 1.5)
 
     @failure_mode(requires=lambda self: self.count_sensitive and self.count > 1)
     def less(self):
         """Less messages are received than expected.
         """
-        return [self.builder] * round(self.count * 0.4)
+        return [None] * round(self.count * 0.4)
 
 
 @dataclass
-class SendTrigger(ReceiveTrigger, short_name='ttransmit'):
+class SendTrigger(ReceiveTrigger, short_name='transmit'):
     count: int = 1
 
     @failure_mode(fails=False)
     def ok(self):
         """Expected is sent.
         """
-        return [self.message] * self.count
+        return [None] * self.count
 
     @failure_mode
     def no(self):

@@ -16,5 +16,9 @@ STATE(uint8_t)
 HOOK(init)
 {
     logic_init();
-    printf("io\n");
+}
+
+HOOK(update)
+{
+    logic_run();
 }

@@ -3,7 +3,7 @@ from pathlib import Path
 from comment_parser.comment_parser import extract_comments_from_str
 from lark import Lark, Transformer
 
-from ..components import FunctionCall, State, Transition, Trigger
+from ..components import State, Transition, Trigger
 from ..graph import StateGraph
 from ..utils import Resolvable
 
@@ -15,21 +15,16 @@ class GrammarTransformer(Transformer):
 
     def transition(self, items):
         options = items[2] if len(items) > 2 else {}
-        trigger_opts = options.pop('trigger', {})
+        typ = options.pop('trigger', None)
         return Transition(from_state=Resolvable.lazy(State, items[0]),
                           to_state=Resolvable.lazy(State, items[1]),
-                          trigger=Trigger.of(trigger_opts.pop('type', None), **trigger_opts),
-                          **options)
+                          trigger=Trigger.of(typ, **options))
 
     def options(self, items):
         return dict(items)
 
     def key_val_pair(self, items):
         return tuple(items)
-
-    def function_call(self, items):
-        path, funcname = items[0]
-        return FunctionCall(f'{path}.h', funcname, args=items[1:])
 
     def function(self, items):
         return [Path(items[0]), str(items[1])]
