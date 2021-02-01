@@ -15,10 +15,10 @@
 /*                              Argument Helpers                              */
 /* -------------------------------------------------------------------------- */
 
-#define INT_ARG *static_cast<int *>(arg)
-#define UINT_ARG *static_cast<unsigned int *>(arg);
-#define FLOAT_ARG *static_cast<float *>(arg)
-#define DOUBLE_ARG *static_cast<double *>(arg)
+#define INT_ARG static_cast<int>(*(double *)arg)
+#define UINT_ARG static_cast<unsigned int>(*(double *)arg)
+#define FLOAT_ARG static_cast<float>(*(double *)arg)
+#define DOUBLE_ARG static_cast<double>(*(double *)arg)
 
 /* -------------------------------------------------------------------------- */
 /*                               Component Base                               */

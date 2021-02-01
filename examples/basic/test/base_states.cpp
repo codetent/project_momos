@@ -1,6 +1,7 @@
 #include "momos/macros.hpp"
 
 #include <stdio.h>
+#include <unistd.h>
 extern "C"
 {
 #include "logic.h"
@@ -21,4 +22,16 @@ HOOK(init)
 HOOK(update)
 {
     logic_run();
+}
+
+TRANSITION(STATE_RECEIVING, STATE_SENDING)
+{
+    uint32_t value = 12;
+    io::in.provide(&value, sizeof(value), 0);
+}
+
+TRANSITION(STATE_SENDING, STATE_RECEIVING)
+{
+    printf("value: %f\n", FLOAT_ARG);
+    sleep(FLOAT_ARG);
 }

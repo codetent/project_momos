@@ -30,7 +30,7 @@ TEST_F(StateTest, STATE_RECEIVING_ExpectedIsReceived)
     // [Step 1]: STATE_RECEIVING: Expected is received. ----------
     ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
 
-    auto arg_1_1 = 0;
+    double arg_1_1 = 0;
     TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1);
     HOOK_RUN(update);
 
@@ -55,7 +55,7 @@ TEST_F(StateTest, STATE_SENDING_TimeoutEqualsExpectedValue)
     // [Step 1]: STATE_RECEIVING: Expected is received. ----------
     ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
 
-    auto arg_1_1 = 0;
+    double arg_1_1 = 0;
     TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1);
     HOOK_RUN(update);
 
@@ -65,7 +65,7 @@ TEST_F(StateTest, STATE_SENDING_TimeoutEqualsExpectedValue)
     // [Step 2]: STATE_SENDING: Timeout equals expected value. ----------
     ASSERT_EQ(STATE_GET(), STATE_SENDING);
 
-    auto arg_2_1 = 2;
+    double arg_2_1 = 2;
     TRANSITION_RUN(STATE_SENDING, STATE_RECEIVING, &arg_2_1);
     HOOK_RUN(update);
 
@@ -79,7 +79,7 @@ TEST_F(StateTest, STATE_SENDING_TimeoutLessThanExpected)
     // [Step 1]: STATE_RECEIVING: Expected is received. ----------
     ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
 
-    auto arg_1_1 = 0;
+    double arg_1_1 = 0;
     TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1);
     HOOK_RUN(update);
 
@@ -89,7 +89,7 @@ TEST_F(StateTest, STATE_SENDING_TimeoutLessThanExpected)
     // [Step 2]: STATE_SENDING: Timeout less than expected. ----------
     ASSERT_EQ(STATE_GET(), STATE_SENDING);
 
-    auto arg_2_1 = 0.2;
+    double arg_2_1 = 0.2;
     TRANSITION_RUN(STATE_SENDING, STATE_RECEIVING, &arg_2_1);
     HOOK_RUN(update);
 
@@ -103,7 +103,7 @@ TEST_F(StateTest, STATE_SENDING_TimeoutGreaterThanExpected)
     // [Step 1]: STATE_RECEIVING: Expected is received. ----------
     ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
 
-    auto arg_1_1 = 0;
+    double arg_1_1 = 0;
     TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1);
     HOOK_RUN(update);
 
@@ -113,7 +113,7 @@ TEST_F(StateTest, STATE_SENDING_TimeoutGreaterThanExpected)
     // [Step 2]: STATE_SENDING: Timeout greater than expected. ----------
     ASSERT_EQ(STATE_GET(), STATE_SENDING);
 
-    auto arg_2_1 = 3.8;
+    double arg_2_1 = 3.8;
     TRANSITION_RUN(STATE_SENDING, STATE_RECEIVING, &arg_2_1);
     HOOK_RUN(update);
 
