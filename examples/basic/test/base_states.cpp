@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
+
 extern "C"
 {
 #include "logic.h"
@@ -32,6 +33,5 @@ TRANSITION(STATE_RECEIVING, STATE_SENDING)
 
 TRANSITION(STATE_SENDING, STATE_RECEIVING)
 {
-    printf("value: %f\n", FLOAT_ARG);
     sleep(FLOAT_ARG);
 }

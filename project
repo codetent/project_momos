@@ -16,9 +16,10 @@ test () {
 test_example () {
     cd ./examples/basic/
 
+    rm ./test/test_states.cpp
     poetry run cmake -B build .
     poetry run cmake --build build
-    #./build/tests
+    ./build/tests
 
     cd ../../
 }
