@@ -88,41 +88,17 @@ class ReceiveTrigger(Trigger, short_name='receive'):
 
 
 @dataclass
-class SendTrigger(ReceiveTrigger, short_name='transmit'):
-    count: int = 1
+class SendTrigger(Trigger, short_name='transmit'):
+    ignore_fail: bool = False
 
     @failure_mode(fails=False)
     def ok(self):
         """Expected is sent.
         """
-        return [None] * self.count
+        return [None]
 
-    @failure_mode
+    @failure_mode(requires=lambda self: self.ignore_fail)
     def no(self):
         """No message is sent.
         """
-        return super().no()
-
-    @failure_mode
-    def more(self):
-        """More messages are sent than expected.
-        """
-        return super().more()
-
-    @failure_mode(requires=lambda self: self.count > 1)
-    def less(self):
-        """Less messages are sent than expected.
-        """
-        return super().less()
-
-    @failure_mode
-    def part_of(self):
-        """Malformed message is sent.
-        """
-        return super().part_of()
-
-    @failure_mode
-    def other_than(self):
-        """Unexpected message is sent.
-        """
-        return super().other_than()
+        return []

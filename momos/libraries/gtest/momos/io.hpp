@@ -19,6 +19,11 @@ private:
     std::list<Message> messages;
 
 public:
+    bool available(void)
+    {
+        return this->messages.size() > 0U;
+    }
+
     void provide(void *buffer, uint32_t length, uint64_t timestamp)
     {
         void *msg_buffer = malloc(length);
