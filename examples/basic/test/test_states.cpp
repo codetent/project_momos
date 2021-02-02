@@ -1,9 +1,13 @@
+#include <iostream>
 #include <gtest/gtest.h>
 
 #include "momos/io.hpp"
 #include "momos/macros.hpp"
 
 #include "base_states.cpp"
+
+
+#define WARN(x) std::cerr << "[     WARN ] " << x << std::endl
 
 
 class StateTest : public ::testing::Test
@@ -31,7 +35,10 @@ TEST_F(StateTest, STATE_RECEIVING_ExpectedIsReceived)
     ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
 
     double arg_1_1 = 0;
-    TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1);
+    if (!TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1))
+    {
+        WARN("Transition undefined for STATE_RECEIVING -> STATE_SENDING");
+    }
     HOOK_RUN(update);
 
     ASSERT_EQ(STATE_GET(), STATE_SENDING);
@@ -56,7 +63,10 @@ TEST_F(StateTest, STATE_SENDING_TimeoutEqualsExpectedValue)
     ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
 
     double arg_1_1 = 0;
-    TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1);
+    if (!TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1))
+    {
+        WARN("Transition undefined for STATE_RECEIVING -> STATE_SENDING");
+    }
     HOOK_RUN(update);
 
     ASSERT_EQ(STATE_GET(), STATE_SENDING);
@@ -66,7 +76,10 @@ TEST_F(StateTest, STATE_SENDING_TimeoutEqualsExpectedValue)
     ASSERT_EQ(STATE_GET(), STATE_SENDING);
 
     double arg_2_1 = 2;
-    TRANSITION_RUN(STATE_SENDING, STATE_RECEIVING, &arg_2_1);
+    if (!TRANSITION_RUN(STATE_SENDING, STATE_RECEIVING, &arg_2_1))
+    {
+        WARN("Transition undefined for STATE_SENDING -> STATE_RECEIVING");
+    }
     HOOK_RUN(update);
 
     ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
@@ -80,7 +93,10 @@ TEST_F(StateTest, STATE_SENDING_TimeoutLessThanExpected)
     ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
 
     double arg_1_1 = 0;
-    TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1);
+    if (!TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1))
+    {
+        WARN("Transition undefined for STATE_RECEIVING -> STATE_SENDING");
+    }
     HOOK_RUN(update);
 
     ASSERT_EQ(STATE_GET(), STATE_SENDING);
@@ -90,7 +106,10 @@ TEST_F(StateTest, STATE_SENDING_TimeoutLessThanExpected)
     ASSERT_EQ(STATE_GET(), STATE_SENDING);
 
     double arg_2_1 = 0.2;
-    TRANSITION_RUN(STATE_SENDING, STATE_RECEIVING, &arg_2_1);
+    if (!TRANSITION_RUN(STATE_SENDING, STATE_RECEIVING, &arg_2_1))
+    {
+        WARN("Transition undefined for STATE_SENDING -> STATE_RECEIVING");
+    }
     HOOK_RUN(update);
 
     ASSERT_NE(STATE_GET(), STATE_RECEIVING);
@@ -104,7 +123,10 @@ TEST_F(StateTest, STATE_SENDING_TimeoutGreaterThanExpected)
     ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
 
     double arg_1_1 = 0;
-    TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1);
+    if (!TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1))
+    {
+        WARN("Transition undefined for STATE_RECEIVING -> STATE_SENDING");
+    }
     HOOK_RUN(update);
 
     ASSERT_EQ(STATE_GET(), STATE_SENDING);
@@ -114,7 +136,10 @@ TEST_F(StateTest, STATE_SENDING_TimeoutGreaterThanExpected)
     ASSERT_EQ(STATE_GET(), STATE_SENDING);
 
     double arg_2_1 = 3.8;
-    TRANSITION_RUN(STATE_SENDING, STATE_RECEIVING, &arg_2_1);
+    if (!TRANSITION_RUN(STATE_SENDING, STATE_RECEIVING, &arg_2_1))
+    {
+        WARN("Transition undefined for STATE_SENDING -> STATE_RECEIVING");
+    }
     HOOK_RUN(update);
 
     ASSERT_EQ(STATE_GET(), STATE_RECEIVING);

@@ -6,6 +6,7 @@
 /* -------------------------------------------------------------------------- */
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <functional>
 #include <map>
 #include <string>
@@ -48,14 +49,17 @@ public:
         return &(this->components[name] = {.run = run});
     }
 
-    void runComponent(std::string name, void *arg, void *out)
+    bool runComponent(std::string name, void *arg, void *out)
     {
         auto component = this->components.find(name);
 
         if (component != this->components.end())
         {
             component->second.run(arg, out);
+            return true;
         }
+
+        return false;
     }
 };
 

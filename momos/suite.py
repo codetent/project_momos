@@ -58,6 +58,7 @@ class TestStep:
 @dataclass
 class TestCase:
     id: str
+    ranking: int = 0
     steps: List[TestStep] = field(default_factory=list)
 
 
