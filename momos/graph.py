@@ -24,6 +24,18 @@ class StateGraph:
     def initial_state(self):
         return next(filter(attrgetter('initial'), self.states))
 
+    @property
+    def isolated_states(self):
+        return tuple(nx.isolates(self.graph))
+
+    @property
+    def single_degree_states(self):
+        return [s for s in self.states if self.graph.out_degree(s) == 1]
+
+    @property
+    def is_closed(self) -> bool:
+        return len(list(self.graph.predecessors(self.initial_state))) > 0
+
     def add_state(self, state: State):
         node_kwargs = {'shape': 'box', 'label': state.id}
 

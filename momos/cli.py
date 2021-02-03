@@ -8,6 +8,10 @@ from .generator import CodeGenerator
 from .parser import parse_file
 from .suite import TestSuite
 
+INDENT = ' ' * 4
+YES = '\u2714'
+NO = '\u274C'
+
 
 @click.group()
 def main() -> None:
@@ -41,6 +45,55 @@ def graph(input_file: str, output_file: str) -> None:
     graph.save(output_file)
 
 
+@click.command('analyze')
+@click.option('-i', '--input-file', type=click.Path(exists=False), required=True, help='Input source file')
+def analyze(input_file: str) -> None:
+    """Analyze specified state machine from given input file.
+    """
+    def check_states():
+        click.echo(f'States: {len(graph.states)}')
+
+        for state in graph.states:
+            click.echo(f'{INDENT}{state.id}')
+
+    def check_transitions():
+        click.echo(f'Transitions: {len(graph.transitions)}')
+
+        for transition in graph.transitions:
+            click.echo(f'{INDENT}{transition.from_state.id} -> {transition.to_state.id}')
+
+            for problem in transition.trigger.problems:
+                click.echo(f'{INDENT}{INDENT}{problem}')
+
+    def check_metrics():
+        click.echo(f'Closed graph: {YES if graph.is_closed else NO}')
+        click.echo()
+
+        isolated_states = graph.isolated_states
+        click.echo(f'Isolated states: {YES if graph.isolated_states else NO}')
+
+        for state in isolated_states:
+            click.echo(f'{INDENT}{state.id}')
+
+        click.echo()
+
+        sd_states = graph.single_degree_states
+        click.echo(f'Single degree states: {YES if sd_states else NO}')
+
+        for state in sd_states:
+            click.echo(f'{INDENT}{state.id}')
+
+    input_file = Path(input_file)
+    graph = parse_file(input_file)
+
+    check_states()
+    click.echo()
+    check_transitions()
+    click.echo()
+    check_metrics()
+    click.echo()
+
+
 @click.command('build')
 @click.option('-i', '--input-file', type=click.Path(exists=False), required=True, help='Input source file')
 @click.option('-b', '--base-file', type=click.Path(exists=False), required=True, help='Base test file')
@@ -66,5 +119,6 @@ def run() -> None:
     """
     main.add_command(include)
     main.add_command(build)
+    main.add_command(analyze)
     main.add_command(graph)
     main()

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
-from typing import Optional
+from typing import List, Optional
 
 from .mode import FailureModeResolver, failure_mode
 
@@ -18,6 +18,10 @@ class Trigger(FailureModeResolver, ABC):
     @property
     def failure_modes(self):
         return {k: m for k, m in self._failure_modes.items() if m.possible}
+
+    @property
+    def problems(self) -> List[str]:
+        return []
 
     @staticmethod
     def of(name: Optional[str] = None, **kwargs):
@@ -86,6 +90,13 @@ class ReceiveTrigger(Trigger, short_name='receive'):
         """
         return [None] * round(self.count * 0.4)
 
+    @property
+    def problems(self) -> List[str]:
+        if self.count_sensitive:
+            return ['Count abnormalities ignored']
+
+        return []
+
 
 @dataclass
 class SendTrigger(Trigger, short_name='transmit'):
@@ -101,4 +112,11 @@ class SendTrigger(Trigger, short_name='transmit'):
     def no(self):
         """No message is sent.
         """
+        return []
+
+    @property
+    def problems(self) -> List[str]:
+        if self.ignore_fail:
+            return ['Send state not checked']
+
         return []
