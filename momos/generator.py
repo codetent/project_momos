@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from caseconverter import pascalcase
 from jinja2 import FileSystemLoader
 from jinja2.environment import Environment
 
@@ -27,6 +28,7 @@ class CodeGenerator:
 
         self.env = Environment(trim_blocks=True, lstrip_blocks=True)
         self.env.loader = FileSystemLoader(path)
+        self.env.filters['pascalcase'] = pascalcase
 
     def generate(self, element: TestSuite, includes: Optional[Iterable] = None) -> str:
         """Generate code out of given test suite and add given includes.
