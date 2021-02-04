@@ -56,6 +56,7 @@ def analyze(input_file: str) -> None:
     """Analyze specified state machine from given input file.
     """
     def check_states():
+        click.echo(f'Initial state: {graph.initial_state.id}')
         click.echo(f'States: {len(graph.states)}')
 
         for state in graph.states:
