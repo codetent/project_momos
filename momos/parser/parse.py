@@ -1,11 +1,19 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from comment_parser.comment_parser import extract_comments_from_str
 from lark import Lark, Transformer
+from lark.exceptions import UnexpectedCharacters, UnexpectedEOF, UnexpectedToken
 
 from ..components import State, Transition, Trigger
 from ..graph import StateGraph
 from ..utils import Resolvable
+
+if TYPE_CHECKING:
+    from typing import List
 
 
 class GrammarTransformer(Transformer):
@@ -48,6 +56,12 @@ class GrammarTransformer(Transformer):
         return items[0] == 'true'
 
 
+class ParseError(RuntimeError):
+    def __init__(self, message: str, line: int):
+        self.message = message
+        self.line = line
+
+
 def parse(text: str) -> StateGraph:
     grammer_path = Path(__file__).parent / 'grammar.lark'
     parser = Lark(grammer_path.read_text())
@@ -58,17 +72,23 @@ def parse(text: str) -> StateGraph:
     for comment in extract_comments_from_str(text, mime='text/x-c'):
         comment_lines = [line.strip(' *') for line in comment.text().split('\n')]
 
-        for line in comment_lines:
-            # with suppress(UnexpectedInput, UnexpectedEOF):
+        for lineno, line in enumerate(comment_lines):
+            lineno += comment.line_number()
+
             try:
                 ast = parser.parse(line)
                 element = transformer.transform(ast)
                 definitions.append(element)
-            except Exception as ex:
-                print(ex)
+            except (UnexpectedCharacters, UnexpectedToken) as ex:
+                if ex.column > 1:
+                    message = ex.args[0].split('at')[0]
+                    raise ParseError(message=message, line=lineno)
+            except UnexpectedEOF as ex:
+                raise ParseError(message='Unexpected end', line=lineno)
 
     Resolvable.resolve_all(definitions)
-    return StateGraph.of(definitions)
+    graph = StateGraph.of(definitions)
+    return graph
 
 
 def parse_file(file_path: Path) -> StateGraph:

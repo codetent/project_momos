@@ -5,7 +5,7 @@ from pathlib import Path
 import click
 
 from .generator import CodeGenerator
-from .parser import parse_file
+from .parser import ParseError, parse_file
 from .suite import TestSuite
 
 INDENT = ' ' * 4
@@ -41,8 +41,13 @@ def graph(input_file: str, output_file: str) -> None:
     input_file = Path(input_file)
     output_file = Path(output_file)
 
-    graph = parse_file(input_file)
-    graph.save(output_file)
+    try:
+        graph = parse_file(input_file)
+    except ParseError as ex:
+        click.echo(f'{input_file}:{ex.line} {ex.message}', err=True)
+        return
+    else:
+        graph.save(output_file)
 
 
 @click.command('analyze')
@@ -84,7 +89,12 @@ def analyze(input_file: str) -> None:
             click.echo(f'{INDENT}{state.id}')
 
     input_file = Path(input_file)
-    graph = parse_file(input_file)
+
+    try:
+        graph = parse_file(input_file)
+    except ParseError as ex:
+        click.echo(f'{input_file}:{ex.line} {ex.message}', err=True)
+        return
 
     check_states()
     click.echo()
@@ -106,9 +116,13 @@ def build(input_file: str, base_file: str, output_file: str, flavor: str) -> Non
     base_file = Path(base_file)
     output_file = Path(output_file)
 
-    graph = parse_file(input_file)
-    suite = TestSuite.of(graph)
+    try:
+        graph = parse_file(input_file)
+    except ParseError as ex:
+        click.echo(f'{input_file}:{ex.line} {ex.message}', err=True)
+        return
 
+    suite = TestSuite.of(graph)
     generator = CodeGenerator(flavor=flavor)
     text = generator.generate(suite, includes=[base_file.relative_to(output_file.parent)])
     output_file.write_text(text)
