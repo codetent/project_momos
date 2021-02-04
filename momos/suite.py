@@ -25,7 +25,7 @@ class TestStep:
     def arguments(self) -> List[Any]:
         """Arguments for step calls.
         """
-        return self.mode.results
+        return self.mode.arguments
 
 
 @dataclass

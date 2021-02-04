@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import inspect
 from functools import partial
-from typing import Any, Callable
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import Any, Callable, List
 
 
 class UnboundFailureMode:
@@ -33,7 +36,9 @@ class FailureMode(UnboundFailureMode):
         self.instance = instance
 
     @property
-    def results(self):
+    def arguments(self) -> List[Any]:
+        """Get arguments returned by failure mode.
+        """
         return self.generator(self.instance) or []
 
     @property
@@ -46,6 +51,8 @@ class FailureMode(UnboundFailureMode):
 
 
 class FailureModeResolver:
+    """Mixin that resolves specified failure modes.
+    """
     def __new__(cls, *args, **kwargs):
         instance = super().__new__(cls)
         instance._failure_modes = {}

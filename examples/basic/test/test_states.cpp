@@ -28,7 +28,7 @@ protected:
     }
 };
 
-TEST_F(StateTest, STATE_RECEIVING_ExpectedIsReceived)
+TEST_F(StateTest, STATE_RECEIVING__STATE_SENDING__ExpectedIsReceived)
 {
 
     // [Step 1]: STATE_RECEIVING: Expected is received. ----------
@@ -45,7 +45,7 @@ TEST_F(StateTest, STATE_RECEIVING_ExpectedIsReceived)
 
 }
 
-TEST_F(StateTest, STATE_RECEIVING_NoMessageIsReceived)
+TEST_F(StateTest, STATE_RECEIVING__STATE_SENDING__NoMessageIsReceived)
 {
 
     // [Step 1]: STATE_RECEIVING: No message is received. ----------
@@ -56,7 +56,7 @@ TEST_F(StateTest, STATE_RECEIVING_NoMessageIsReceived)
 
 }
 
-TEST_F(StateTest, STATE_SENDING_TimeoutEqualsExpectedValue)
+TEST_F(StateTest, STATE_SENDING__STATE_RECEIVING__TimeoutEqualsExpectedValue)
 {
 
     // [Step 1]: STATE_RECEIVING: Expected is received. ----------
@@ -86,7 +86,7 @@ TEST_F(StateTest, STATE_SENDING_TimeoutEqualsExpectedValue)
 
 }
 
-TEST_F(StateTest, STATE_SENDING_TimeoutLessThanExpected)
+TEST_F(StateTest, STATE_SENDING__STATE_RECEIVING__TimeoutLessThanExpected)
 {
 
     // [Step 1]: STATE_RECEIVING: Expected is received. ----------
@@ -116,7 +116,7 @@ TEST_F(StateTest, STATE_SENDING_TimeoutLessThanExpected)
 
 }
 
-TEST_F(StateTest, STATE_SENDING_TimeoutGreaterThanExpected)
+TEST_F(StateTest, STATE_SENDING__STATE_RECEIVING__TimeoutGreaterThanExpected)
 {
 
     // [Step 1]: STATE_RECEIVING: Expected is received. ----------

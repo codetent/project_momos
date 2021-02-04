@@ -2,35 +2,50 @@ from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import TYPE_CHECKING
 
 from .mode import FailureModeResolver, failure_mode
+
+if TYPE_CHECKING:
+    from .mode import FailureMode
+
+    from typing import List, Optional, Dict
 
 TRIGGER_IMPLS = {}
 
 
 @dataclass
 class Trigger(FailureModeResolver, ABC):
+    """Base trigger class. All implementations must inherit this class and specify a short name.
+    """
     def __init_subclass__(cls, *, short_name: Optional[str]):
         TRIGGER_IMPLS[short_name] = cls
         cls.id = short_name
 
     @property
-    def failure_modes(self):
+    def failure_modes(self) -> Dict[str, FailureMode]:
+        """Get dict of all failure modes specified in impl class.
+        """
         return {k: m for k, m in self._failure_modes.items() if m.possible}
 
     @property
     def problems(self) -> List[str]:
+        """Get list of problems that can occur.
+        """
         return []
 
     @staticmethod
     def of(name: Optional[str] = None, **kwargs):
+        """Create instance of registered impl class.
+        """
         trigger_cls = TRIGGER_IMPLS[name]
         return trigger_cls(**kwargs)
 
 
 @dataclass
 class DummyTrigger(Trigger, short_name=None):
+    """Trigger type which does nothing. This is the basic trigger when no other is specified.
+    """
     @failure_mode(fails=False)
     def ok(self) -> None:
         """Do nothing.
@@ -40,6 +55,8 @@ class DummyTrigger(Trigger, short_name=None):
 
 @dataclass
 class TimeoutTrigger(Trigger, short_name='timeout'):
+    """Trigger type which is coupled with a specified timeout.
+    """
     value: int
 
     @failure_mode(fails=False)
@@ -63,6 +80,8 @@ class TimeoutTrigger(Trigger, short_name='timeout'):
 
 @dataclass
 class ReceiveTrigger(Trigger, short_name='receive'):
+    """Trigger waiting for an incoming message.
+    """
     count: int = 1
     count_sensitive: bool = True
 
@@ -100,6 +119,8 @@ class ReceiveTrigger(Trigger, short_name='receive'):
 
 @dataclass
 class SendTrigger(Trigger, short_name='transmit'):
+    """Trigger waiting for a successful sent message.
+    """
     ignore_fail: bool = False
 
     @failure_mode(fails=False)
