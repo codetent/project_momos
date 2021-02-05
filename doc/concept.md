@@ -18,7 +18,7 @@ From a technical view, messages increase their size when they are processed by d
 
 | Philosophers analogy [Q3]        | Technical overview [Q3]    |
 |:--------------------------------:|:--------------------------:|
-| ![I1](./images/philosophers.png) | ![I2](./images/layers.png) |
+| ![I1](./images/philosophers.svg) | ![I2](./images/layers.svg) |
 
 ### Application in the Automotive Industry
 
