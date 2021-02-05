@@ -16,6 +16,10 @@ The multilayer message flow can be illustrated using the "two philosophers analo
 
 From a technical view, messages increase their size when they are processed by deeper layers. Each layer adds its own protocol specific header to give the remote side meta information about a received packet. Using this information, a protocol knows if the message is delivered with multiple packets or which portion it should pass to the higher layer (payload).
 
+| Philosophers analogy [Q3]        | Technical overview [Q3]    |
+|:--------------------------------:|:--------------------------:|
+| ![I1](./images/philosophers.png) | ![I2](./images/layers.png) |
+
 ### Application in the Automotive Industry
 
 TODO: why protocol = state machine
