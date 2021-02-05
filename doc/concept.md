@@ -31,6 +31,21 @@ This layer model comes with a few important aspects [Q2]:
 
 ### Protocol Development Process
 
+Protocols are usually implemented in software. Therefore, the development process follows the process of software development. But there are also some differences when protocols are developed. 
+
+In general, the process can be splitted in to several development phases. There are different models which can be used ranging from strict waterfall models to agile methods. Since protocols are usually critical software and can be found in embedded systems too, the waterfall model is often preferred for protocols.
+
+The development phase starts with requirement plannung for the protocol that should be created.
+The following design process is dependent on the actual usage case. Either the service is defined first or the focus only lies on the protocol itself. The most protocols used for the internet or in embedded networks are mostly skipping the service definition step.
+
+After designing the protocol, the design has to be checked against its performance and functional correctness. The first is important to ensure the compliance with realtime or memory specifications. This is usually done using analystic models or by creating prototypes. Afterwards, the correctness regarding all properties of the design is checked. This is usually done using model checkers like [UPPAAL](https://uppaal.org/). These two steps are very important for finding and fixing problems as early in the process as possible, because the later it is found the higher the repairment costs.
+
+The design process shall not contain any implementation specific decisions. Rather it should be held as generic as possible. Therefore, the implementation of the protocol has to be planned before the actual coding work. Often, this stage is accompanied by intermediate verification steps like reviews or other measures to reduce the failure rate.
+
+When the protocol is implemented, several test steps follow to check the actual implementation. This protocol test consists of different white and black box testing approaches like unit tests or system tests. Afterwards, an additional compliance test checks the system against the requirements by a black box test which is confirmed by issuing a certification by a test laboratory.
+
+The tested protocol is then integrated into a system or another product which represents also the last stage of checking the interoperability. In this stage, differences compared to similar implementations can be found. Additionally, the robustness or performance can be tested at the end of the development cycle.
+
 ### Protocol Structure
 
 ### Protocols in the Automotive Industry
