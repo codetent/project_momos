@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -13,56 +12,59 @@ from ..graph import StateGraph
 from ..utils import Resolvable
 
 if TYPE_CHECKING:
-    from typing import List
+    from typing import Dict, Tuple
 
 
 class GrammarTransformer(Transformer):
-    def state(self, items):
+    """Transformer for grammer that converts raw values to actual items.
+    """
+    def state(self, items) -> State:
         options = items[1] if len(items) > 1 else {}
         return State(items[0], **options)
 
-    def transition(self, items):
+    def transition(self, items) -> Transition:
         options = items[2] if len(items) > 2 else {}
         typ = options.pop('trigger', None)
         return Transition(from_state=Resolvable.lazy(State, items[0]),
                           to_state=Resolvable.lazy(State, items[1]),
                           trigger=Trigger.of(typ, **options))
 
-    def options(self, items):
+    def options(self, items) -> Dict:
         return dict(items)
 
-    def key_val_pair(self, items):
+    def key_val_pair(self, items) -> Tuple:
         return tuple(items)
 
-    def function(self, items):
-        return [Path(items[0]), str(items[1])]
-
-    def identifier(self, items):
+    def identifier(self, items) -> str:
         return str(items[0])
 
-    def string(self, items):
+    def string(self, items) -> str:
         return str(items[0])
 
-    def character(self, items):
+    def character(self, items) -> str:
         return str(items[0])
 
-    def float(self, items):
+    def float(self, items) -> float:
         return float(items[0])
 
-    def integer(self, items):
+    def integer(self, items) -> int:
         return int(items[0])
 
-    def boolean(self, items):
+    def boolean(self, items) -> bool:
         return items[0] == 'true'
 
 
 class ParseError(RuntimeError):
+    """Error indicating a parsing problem.
+    """
     def __init__(self, message: str, line: int):
         self.message = message
         self.line = line
 
 
 def parse(text: str) -> StateGraph:
+    """Parse given source code text into a state graph.
+    """
     grammer_path = Path(__file__).parent / 'grammar.lark'
     parser = Lark(grammer_path.read_text())
     transformer = GrammarTransformer()
@@ -92,4 +94,6 @@ def parse(text: str) -> StateGraph:
 
 
 def parse_file(file_path: Path) -> StateGraph:
+    """Parse file at given path into a state graph.
+    """
     return parse(file_path.read_text())
