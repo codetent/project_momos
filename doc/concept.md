@@ -6,9 +6,9 @@
 
 ## Protocols
 
-### Layer Model
-
 In order that interlocutors can communicate with each other, they must agree on a common language. In the context of electronic systems, when computer systems are communicating, these languages are called protocols. They care about initialising connections and the actual exchange of the information. [Q1]
+
+### Layer Model
 
 A computer system consists of several abstraction layers to make them viable for a variety of use cases and for separating the communication logic into smaller units. Each of these layers has its own protocol.
 
@@ -29,9 +29,11 @@ This layer model comes with a few important aspects [Q2]:
 - Less overhead for the highest layers because they only have to care about the actual content. The other details regarding the safe transmission are abstracted away by the lower layers.
 - Issues occured at lower layers are not affecting the higher layer. This problems are usually detected at the corresponding lower layers and the defect message is not passed further. In fact, it can be even possible that the highest layers do not even recognize a problem with the transportation.
 
-### Inner Structure
+### Protocol Development Process
 
-### Application in the Automotive Industry
+### Protocol Structure
+
+### Protocols in the Automotive Industry
 
 TODO: why protocol = state machine
 
