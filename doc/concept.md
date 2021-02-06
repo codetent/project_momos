@@ -1,14 +1,10 @@
+# Motivation
 
-
-# Introduction
-
-## Motivation
-
-## Protocols
+# Protocols
 
 In order that interlocutors can communicate with each other, they must agree on a common language. In the context of electronic systems, when computer systems are communicating, these languages are called protocols. They care about initialising connections and the actual exchange of the information. [Q1]
 
-### Layer Model
+## Layer Model
 
 A computer system consists of several abstraction layers to make them viable for a variety of use cases and for separating the communication logic into smaller units. Each of these layers has its own protocol.
 
@@ -29,7 +25,7 @@ This layer model comes with a few important aspects [Q2]:
 - Less overhead for the highest layers because they only have to care about the actual content. The other details regarding the safe transmission are abstracted away by the lower layers.
 - Issues occured at lower layers are not affecting the higher layer. This problems are usually detected at the corresponding lower layers and the defect message is not passed further. In fact, it can be even possible that the highest layers do not even recognize a problem with the transportation.
 
-### Protocol Development Process
+## Protocol Development Process
 
 Protocols are usually implemented in software. Therefore, the development process follows the process of software development. 
 
@@ -40,25 +36,46 @@ The following design process is dependent on the actual usage case. Either the s
 
 After designing the protocol, the design has to be checked against its performance and functional correctness. The first is important to ensure the compliance with realtime or memory specifications. This is usually done using analystic models or by creating prototypes. Afterwards, the correctness regarding all properties of the design is checked. [Q2] This is usually done using model checkers like [UPPAAL](https://uppaal.org/). These two steps are very important for finding and fixing problems as early in the process as possible, because the later it is found the higher the repairment costs.
 
-The design process shall not contain any implementation specific decisions. Rather it should be held as generic as possible. Therefore, the implementation of the protocol has to be planned before the actual coding work. Often, this stage is accompanied by intermediate verification steps like reviews or other measures to reduce the failure rate. [Q2]
+The design process shall not contain any implementation specific decisions. Rather it should be held as generic as possible. Therefore, the implementation of the protocol has to be planned before the actual coding work. The implementation phase itself is often accompanied by intermediate verification steps like reviews or other measures to reduce the failure rate (see [Protocol Implementation](#protocol-implementation)). [Q2]
 
-When the protocol is implemented, several test steps follow to check the actual implementation. This protocol test consists of different white and black box testing approaches like unit tests or system tests. Afterwards, an additional compliance test checks the system against the requirements by a black box test which is confirmed by issuing a certification by a test laboratory. [Q2]
+When the protocol is implemented, several test steps follow to check the actual implementation (see [Protocol Testing](#protocol-testing)). This protocol test consists of different white and black box testing approaches like unit tests or system tests. Afterwards, an additional compliance test checks the system against the requirements by a black box test which is confirmed by issuing a certification by a test laboratory. [Q2]
 
 The tested protocol is then integrated into a system or another product which represents also the last stage of checking the interoperability. In this stage, differences compared to similar implementations can be found. Additionally, the robustness or performance can be tested at the end of the development cycle. [Q2]
 
-| Development Cycle [Q2]       |
+| Development Cycle            |
 |:----------------------------:|
 | ![I3](./images/devcycle.svg) |
 
-### Protocol Structure
+### Protocol Implementation
 
-### Protocols in the Automotive Industry
+Implementing a protocol is the translation of the specification to the a source code that fulfills the given requirements. Beside the testing phase, the implementation is one of the most time-consuming tasks in the development cycle but mostly less attention is spent on this task [Q2]. Therefore, the most issues are created during this phase which are usually not solved until the following testing phase.
+
+In general, we are distinguishing between two results of this phase: having a prototype and creating the final product.
+
+The prototype is used for verifying if the specification can be converted to a running program. Some tools can do this step automatically. This tool-generated implementation is commonly not a performant or readable solution but it proves the feasibility of the protocol design.
+
+For creating a final product, software developers are translating the specification by their own. This results into a cleaner solution but also leads to additional problems.
+Since the specification shall not contain implementation details and other preceding planning does not cover every detail of the implementation, the developer must make his own decisions. These decisions are error-prone because the are subjective, dependent on the experience level and commonly do not cover all possible edge cases.
+
+Decisions are not the only influencing factor. The protocol is implemented for a specific target system and is therefore highly dependent on the hardware and the operating system [Q2]. This effect can be minimized by separating the implementation into logic and hardware abstraction layers, but also in this case there are some parts of the code which cannot be run on any target.
+
+The implementation done by developers are split in practice into two substeps: implementation design & coding.
+
+#### Implementation Design
+
+#### Coding
+
+### Protocol Testing
+
+## Protocol Structure
+
+## Protocols in the Automotive Industry
 
 TODO: why protocol = state machine
 
-### Example: gPTP
+## Example: gPTP
 
-## State Machines
+# State Machines
 
 A state machine describes the behavior of a model. This concept focuses on finite state machines which are state machines containing only a finite number of reachable states.
 In short, the states are known in advance and the overall amount does not change over time.
@@ -69,7 +86,7 @@ The connections between the states, called transitions, are coupled with an acti
 
 A collection of states and their transitions ordered by there occurence is called path. Paths describe the traversable ways through the state machine. If there are cycles, the count of all paths is infinite because it is possible that a feedback transition is traversed multiple times. A simple state machine is a special case without any loops which contains a finite amount of paths. As cycles are a common element in normal state machines, the processing is done using simple paths. This special type of path does not contain any loop and is therefore much easier to process. Additionally, omitting the loops does not change the behavior of the state graph any further because a loop in a path is only executing some actions multiple times.
 
-## Graph Representations
+# Graph Representations
 
 State graphs can be created using various graphical tools or code based:
 
@@ -87,13 +104,13 @@ The DOT language was created for visualizing structural information as abstract 
 
 There are also other visual languages like DOT but especially designed for state machines. State Machine cat is one if them. In general, it is a simplified version of DOT without depending on Graphviz tools. The code primarily declares transitions and the states are automatically generated. Compared to DOT the user must not define graph types or the structure typically used for state graphs because this is done by the language itself. [\[3\]](https://github.com/sverweij/state-machine-cat)
 
-## Protocol Specification
+# Protocol Specification
 
-## Protocol Implementation Testing
+# Protocol Implementation Testing
 
-## Test Case Selection
+# Test Case Selection
 
-## Code Documentation
+# Code Documentation
 
 Documentiation is crucial for developing understandable and maintainable software. In the most cases, good documentation is very rare and even some companies rely on the code only instead of having an explicit documentation unter the motto "our code is our documentation". But in short: "every engineer is also a writer" [\[4\]](https://developers.google.com/tech-writing) because a product or software component is useless if they target audience does not know how to use it.
 
@@ -103,7 +120,7 @@ When developing software, the main focus is on the implementation work. Writing 
 
 To lower the barriers for developers getting a good documentation, the state-of-the-art way is generating one from existing documents, for example source code. Generation is usually done through adding annotations (mostly using comments) to the implementation which are then parsed and converted to a human-readable format like a PDF document. Additionally, modern tools support creating graphs of the components that are integrated into the result. If the documentation contains examples, which is highly preferred, these can also be automatically checked against their proper functioning.
 
-## State of the Art
+# State of the Art
 
 # Concept
 
@@ -117,9 +134,9 @@ If it is the case that the protocol implementation requires transition triggers 
 
 Generating test cases is not the only target of this approach. It also simplifies documenting the protocol implementation. For this, the state graph build by the annotations can be converted to an image which can be included in the final code documentation. If there is no extra documentation, the annotations itself will also help developers to understand the implemented state machine.
 
-## System Overview
+# System Overview
 
-## Graph Definition
+# Graph Definition
 
 The state machine is defined using comments in the source code file. The content of this comments is called annotations because it consists of metainformation parsed by the generation tool. These comments must be added by the developer to the implementation and should serve als general code documentation too. Therefore, the comments must be readable by a software and humans.
 
@@ -133,15 +150,15 @@ As the graph languages are designed for describing nodes and edges only. This is
 
 Because of all these drawbacks, and there is no way around creating some custom format, an own domain specific language is created especially for this application.
 
-### Custom Domain Specific Language
+## Custom Domain Specific Language
 
-## Graph Structure
+# Graph Structure
 
-## Test Structure
+# Test Structure
 
-## Flow
+# Flow
 
-## Reference
+# Reference
 
 [Q1]: Alfred Olbrich, Netze — Protokolle — Spezifikationen, 2003
 
