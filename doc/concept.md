@@ -61,19 +61,29 @@ Decisions are not the only influencing factor. The protocol is implemented for a
 
 The implementation done by developers are split in practice into two substeps: implementation design & coding.
 
-#### Implementation Design
+Designing an implementation is the planning work required before writing the actual program. Without this intermediate step all decisions have to be made by the developers who can introduce problems by overseeing edge cases or making the wrong conclusions caused by missing experience. To minimize this problems following aspects should be considered during this stage:
 
-#### Coding
+- Implementation is done for a specific framework. This framework including the target hardware and operating system must be considered when creating a design. Additionally, other dependencies like open source libraries are defined.
+
+- Implemenation freedom must be defined. In the most cases, coding requires local decisions that cannot be decided in advance or are not of any significance for the outer interface. This ability requires especially experience, instinctive feeling and a well overview of the whole protocol. Since this is not planned in advance, wrong decisions can lead to misfunctions not detected until the final testing phases or an increase in the time effort.
+
+- The architecture for the protocol implementation must be choosen (see [Protocol Architectures](#protocol-architectures)).
+
+- The implementation must be specified in an (internal) document that is the base for the coding work. The level of detail is dependent on the actual protocol.
 
 ### Protocol Testing
-
-## Protocol Structure
 
 ## Protocols in the Automotive Industry
 
 TODO: why protocol = state machine
 
 ## Example: gPTP
+
+# Protocol Architectures
+
+The server model describes a sequential process based on finite state machines. When an external event occurs it stored in a global waiting list. Each iteration, an event is read from this list and processed which leads to a transition in a state graph. Additionally, the current state of the state graphs are updated. This architecture is simple and therefore suitable for small protocols.
+
+The activity thread model uses procedures where each of them is responsible for proceeding an event and leading to a transition of the protocol state machine. Triggering an event leads to a chain of procedures (activity thread) because processing one event triggers a transition which is then processed by another procedure. This architecture allows the execution of multiple events in parallel by queuing all events but requires additional synchronization measures. In general, this model is very efficient compared to the server model and can be splitted into many layers for a better structure.
 
 # State Machines
 
