@@ -46,7 +46,9 @@ When the protocol is implemented, several test steps follow to check the actual 
 
 The tested protocol is then integrated into a system or another product which represents also the last stage of checking the interoperability. In this stage, differences compared to similar implementations can be found. Additionally, the robustness or performance can be tested at the end of the development cycle. [Q2]
 
-TODO: Add dev cycle image
+| Development Cycle [Q2]       |
+|:----------------------------:|
+| ![I3](./images/devcycle.svg) |
 
 ### Protocol Structure
 
