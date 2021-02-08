@@ -46,7 +46,7 @@ The tested protocol is then integrated into a system or another product which re
 |:----------------------------:|
 | ![I3](./images/devcycle.svg) |
 
-### Protocol Implementation
+## Protocol Implementation
 
 Implementing a protocol is the translation of the specification to the a source code that fulfills the given requirements. Beside the testing phase, the implementation is one of the most time-consuming tasks in the development cycle but mostly less attention is spent on this task [Q2]. Therefore, the most issues are created during this phase which are usually not solved until the following testing phase.
 
@@ -71,23 +71,29 @@ Designing an implementation is the planning work required before writing the act
 
 - The implementation must be specified in an (internal) document that is the base for the coding work. The level of detail is dependent on the actual protocol.
 
-### Protocol Testing
+### Protocol Architectures
+
+There are different ways to implement a multilayer communication system. The commonly used ones are the server model and the activity thread model [Q2][Q4]. Additionally, there are other architectures deriving from these two. When which model is used depends on the requirements and the actual use case.
+
+The server model uses a single process or multiple processes. A single process server maintains a single process to handle all connections. In comparision, a multiprocess server handles all clients in a new process or uses a limited process pool to choose from. [Q4]
+
+The internal communication to all the handlers can be done synchronously or asynchronously. Asynchronous communication works by creating queues for exchanging messages. Usually, a pair of queues (one for input, one for output) is created per process. This has the advantage that messages can be processed more efficiently but at the same time, it requires additional flow control and handling mechanism of the pipe pool. Synchronous messaging limits the number of concurrent message streams to 1, which makes it much simpler to use but also costs the concurrency. [Q4]
+
+The activity thread model uses a collection of procedures. The communication is done using procedure calls. [Q2][Q4] Each of the procedures is responsible for processing a single event. This step usually leads to a transition of the protocol state machine. If it has an output, the next procedure will be called passing the output to it. The chain of the procedures is called "activity thread" and therefore it is the name giver for this model. Multiple activity streams can be processed in parallel which allows a concurrent behavior that must be manually synchronized. [Q2]
+
+Procedures follow a certain structure. First, the current state together with the input is checked and decided if it is further processed. If the combination is allowed, the corresponding task is done and the transition will be initiated. The transition will then set the next upcoming state. Afterwards, another procedure is called if there is a result. If not, the activity stream ends. The advantage of this architecture is that this message passing is very memory efficient, because the data does not have to be buffered between the calls. [Q2]
+
+If both architectures are compared, the server model is suitable for applications where performance is not playing a big role. In addition, it should only be used together with multiple handler processes. This can be concluded because the buffering of the messages requires additional memory space and reading or writing it requires time [Q2]. A second problem is the number of context switches required for the internal communication. Furthermore, the process scheduling can also infect the performance. [Q4]
+
+An implementation of an activity thread model can be very effictive because passing and processing message does not require context switches. Designing such an architecture should better not be overflown because there are some problems that occur just with this model. Concurrent procedures must be handled correctly and it is possible that procedures cause hang ups because of cyclical calls.
+
+## Protocol Testing
 
 ## Protocols in the Automotive Industry
 
 TODO: why protocol = state machine
 
 ## Example: gPTP
-
-# Protocol Architectures
-
-There are different ways to implement a multilayer communication system. The commonly used ones are the server model and the activity thread model [Q2][Q4]. Additionally, there are other architectures deriving from these two. When which model is used depends on the requirements and the actual use case.
-
-The server model uses a single process or multiple processes. A single process server maintains a single process to handle all connections. In comparision, a multiprocess server handles all clients in a new process or uses a limited process pool to choose from.
-
-The internal communication to all the handlers can be done synchronously or asynchronously. Asynchronous communication works by creating queues for exchanging messages. Usually, a pair of queues (one for input, one for output) is created per process. This has the advantage that messages can be processed more efficiently but at the same time, it requires additional flow control and handling mechanism of the pipe pool. Synchronous messaging limits the number of concurrent message streams to 1, which makes it much simpler to use but also costs the concurrency. As the synchronization of the messages is now done by the dispatcher, the overhead is moved away from the actual protocol logic which makes it unsuitable for single process communcations.
-
-The activity thread model uses procedures where each of them is responsible for proceeding an event and leading to a transition of the protocol state machine. Triggering an event leads to a chain of procedures (activity thread) because processing one event triggers a transition which is then processed by another procedure. This architecture allows the execution of multiple events in parallel by queuing all events but requires additional synchronization measures. In general, this model is very efficient compared to the server model and can be splitted into many layers for a better structure.
 
 # State Machines
 
