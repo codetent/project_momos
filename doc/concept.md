@@ -81,7 +81,11 @@ TODO: why protocol = state machine
 
 # Protocol Architectures
 
-The server model describes a sequential process based on finite state machines. When an external event occurs it stored in a global waiting list. Each iteration, an event is read from this list and processed which leads to a transition in a state graph. Additionally, the current state of the state graphs are updated. This architecture is simple and therefore suitable for small protocols.
+There are different ways to implement a multilayer communication system. The commonly used ones are the server model and the activity thread model [Q2][Q4]. Additionally, there are other architectures deriving from these two. When which model is used depends on the requirements and the actual use case.
+
+The server model uses a single process or multiple processes. A single process server maintains a single process to handle all connections. In comparision, a multiprocess server handles all clients in a new process or uses a limited process pool to choose from.
+
+The internal communication to all the handlers can be done synchronously or asynchronously. Asynchronous communication works by creating queues for exchanging messages. Usually, a pair of queues (one for input, one for output) is created per process. This has the advantage that messages can be processed more efficiently but at the same time, it requires additional flow control and handling mechanism of the pipe pool. Synchronous messaging limits the number of concurrent message streams to 1, which makes it much simpler to use but also costs the concurrency. As the synchronization of the messages is now done by the dispatcher, the overhead is moved away from the actual protocol logic which makes it unsuitable for single process communcations.
 
 The activity thread model uses procedures where each of them is responsible for proceeding an event and leading to a transition of the protocol state machine. Triggering an event leads to a chain of procedures (activity thread) because processing one event triggers a transition which is then processed by another procedure. This architecture allows the execution of multiple events in parallel by queuing all events but requires additional synchronization measures. In general, this model is very efficient compared to the server model and can be splitted into many layers for a better structure.
 
@@ -175,6 +179,8 @@ Because of all these drawbacks, and there is no way around creating some custom 
 [Q2]: Hartmut König, Protocol Engineering, 2003
 
 [Q3]: Tanenbaum & Wetherall, Computer Networks - Fifth Edition, 2011
+
+[Q4]: L. Svobodova, Imdementing OSI Svstems, 1989
 
 [1]: C. Bourhfir et. al., Automatic executable test case generation for extended finite state machine protocols, 1997
 
