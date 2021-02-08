@@ -85,7 +85,7 @@ Procedures follow a certain structure. First, the current state together with th
 
 If both architectures are compared, the server model is suitable for applications where performance is not playing a big role. In addition, it should only be used together with multiple handler processes. This can be concluded because the buffering of the messages requires additional memory space and reading or writing it requires time [Q2]. A second problem is the number of context switches required for the internal communication. Furthermore, the process scheduling can also infect the performance. [Q4]
 
-An implementation of an activity thread model can be very effictive because passing and processing message does not require context switches. Designing such an architecture should better not be overflown because there are some problems that occur just with this model. Concurrent procedures must be handled correctly and it is possible that procedures cause hang ups because of cyclical calls.
+An implementation of an activity thread model can be very effictive because passing and processing message does not require context switches. Designing such an architecture should better not be overflown because there are some problems that occur just with this model. Concurrent procedures must be handled correctly and it is possible that procedures cause hang ups because of cyclical calls. [Q2]
 
 ## Protocol Testing
 
