@@ -77,6 +77,9 @@ def parse(text: str) -> StateGraph:
         for lineno, line in enumerate(comment_lines):
             lineno += comment.line_number()
 
+            if not line.startswith('@'):
+                continue
+
             try:
                 ast = parser.parse(line)
                 element = transformer.transform(ast)
