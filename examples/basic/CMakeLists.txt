@@ -40,8 +40,7 @@ execute_process(COMMAND momos include gtest
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
 message("Momos include path: ${MOMOS_INCLUDE}")
 
-add_executable(tests test/main.cpp
-                     test/test_states.cpp
+add_executable(tests test/test_states.cpp
                      test/mocks/hal_mock.cpp
                      src/messages.c
                      src/logic.c
