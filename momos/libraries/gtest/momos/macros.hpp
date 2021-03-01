@@ -158,4 +158,25 @@ public:
                                                                                                       \
     void TRANSITION_NAME(a, b)::run(void *arg, void *out)
 
+/* ---------------------------------- Check --------------------------------- */
+
+#define CHECK_NAME(a, b) __check_##a##_##b
+#define CHECK_KEY(a, b) "__check_" #a "_" #b
+#define CHECK_RUN(a, b) ComponentRegistry::getInstance()->runComponent(CHECK_KEY(a, b), NULL, NULL)
+#define CHECK(a, b)                                                                              \
+    class CHECK_NAME(a, b)                                                                       \
+    {                                                                                            \
+    private:                                                                                     \
+        static ComponentInfo *info;                                                              \
+                                                                                                 \
+    public:                                                                                      \
+        static void run(void *arg, void *out);                                                   \
+    };                                                                                           \
+                                                                                                 \
+    ComponentInfo *CHECK_NAME(a, b)::info = ComponentRegistry::getInstance()->createAndRegister( \
+        CHECK_KEY(a, b),                                                                         \
+        CHECK_NAME(a, b)::run);                                                                  \
+                                                                                                 \
+    void CHECK_NAME(a, b)::run(void *arg, void *out)
+
 #endif // __MOMOS_MACROS__
