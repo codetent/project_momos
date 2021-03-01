@@ -35,8 +35,3 @@ TRANSITION(STATE_RECEIVE, STATE_RECEIVE_TIMESTAMP)
     uint32_t value = 12;
     io::in.provide(&value, sizeof(value), 0);
 }
-
-// TRANSITION(STATE_SENDING, STATE_RECEIVING)
-// {
-//     sleep(FLOAT_ARG);
-// }

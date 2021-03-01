@@ -13,19 +13,18 @@
 
 static uint8_t current_state;
 static time_t next_time;
+static bool received;
 
 void states_init(void)
 {
     next_time = time(0) + 2U;
     current_state = STATE_WAIT; // @transition . -> STATE_WAIT
+    received = false;
 }
 
 void states_update(void)
 {
-    if (current_state == STATE_RECEIVE)
-    {
-        current_state = STATE_RECEIVE_TIMESTAMP; // @transition STATE_RECEIVE -> STATE_RECEIVE_TIMESTAMP [receive]
-    }
+    received = true;
 }
 
 void states_run(void)
@@ -52,6 +51,14 @@ void states_run(void)
         if (true)
         {
             current_state = STATE_RECEIVE; // @transition STATE_SEND_TIMESTAMP -> STATE_RECEIVE
+        }
+        break;
+
+    case STATE_RECEIVE:
+        if (received)
+        {
+            received = false;
+            current_state = STATE_RECEIVE_TIMESTAMP; // @transition STATE_RECEIVE -> STATE_RECEIVE_TIMESTAMP [receive]
         }
         break;
 
