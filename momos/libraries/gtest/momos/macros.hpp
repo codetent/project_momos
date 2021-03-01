@@ -112,16 +112,30 @@ public:
     {                                                                                        \
     private:                                                                                 \
         static ComponentInfo *info;                                                          \
+        static void _run(void *arg, void *out);                                              \
                                                                                              \
     public:                                                                                  \
-        static void run(void *arg, void *out);                                               \
+        static bool skipped;                                                                 \
+        static void run(void *arg, void *out)                                                \
+        {                                                                                    \
+            if (skipped)                                                                     \
+            {                                                                                \
+                skipped = false;                                                             \
+                return;                                                                      \
+            }                                                                                \
+                                                                                             \
+            _run(arg, out);                                                                  \
+        }                                                                                    \
     };                                                                                       \
                                                                                              \
     ComponentInfo *HOOK_NAME(x)::info = ComponentRegistry::getInstance()->createAndRegister( \
         HOOK_KEY(x),                                                                         \
         HOOK_NAME(x)::run);                                                                  \
                                                                                              \
-    void HOOK_NAME(x)::run(void *arg, void *out)
+    bool HOOK_NAME(x)::skipped = false;                                                      \
+    void HOOK_NAME(x)::_run(void *arg, void *out)
+
+#define HOOK_SKIP(x) HOOK_NAME(x)::skipped = true
 
 /* ------------------------------- Transitions ------------------------------ */
 
