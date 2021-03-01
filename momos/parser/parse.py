@@ -19,21 +19,43 @@ class GrammarTransformer(Transformer):
     """Transformer for grammer that converts raw values to actual items.
     """
     def state(self, items) -> State:
-        options = items[1] if len(items) > 1 else {}
-        return State(items[0], **options)
+        try:
+            identifier, *options = items
+        except ValueError:
+            identifier = items[0]
+            options = []
+
+        return State(identifier, **dict(options))
 
     def transition(self, items) -> Transition:
-        options = items[2] if len(items) > 2 else {}
-        typ = options.pop('trigger', None)
-        return Transition(from_state=Resolvable.lazy(State, items[0]),
-                          to_state=Resolvable.lazy(State, items[1]),
-                          trigger=Trigger.of(typ, **options))
+        try:
+            from_state, to_state, trigger = items
+        except ValueError:
+            from_state, to_state = items
+            trigger = Trigger.of()
 
-    def options(self, items) -> Dict:
-        return dict(items)
+        if not from_state:
+            return
 
-    def key_val_pair(self, items) -> Tuple:
+        from_state = Resolvable.lazy(State, from_state)
+        to_state = Resolvable.lazy(State, to_state)
+        return Transition(from_state=from_state, to_state=to_state, trigger=trigger)
+
+    def trigger(self, items) -> Trigger:
+        typ, *options = items
+        return Trigger.of(typ, **dict(options))
+
+    def option(self, items):
+        return items[0]
+
+    def pair(self, items) -> Tuple:
         return tuple(items)
+
+    def flag(self, items) -> Tuple:
+        return (str(items[-1]), len(items) == 1)
+
+    def implicit(self, items) -> None:
+        return None
 
     def identifier(self, items) -> str:
         return str(items[0])
@@ -49,9 +71,6 @@ class GrammarTransformer(Transformer):
 
     def integer(self, items) -> int:
         return int(items[0])
-
-    def boolean(self, items) -> bool:
-        return items[0] == 'true'
 
 
 class ParseError(RuntimeError):

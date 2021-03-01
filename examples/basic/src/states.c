@@ -1,41 +1,66 @@
 #include "states.h"
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <time.h>
 
-#define STATE_RECEIVING 1U
-#define STATE_SENDING 2U
+#define STATE_WAIT 1U              // @state STATE_WAIT [initial]
+#define STATE_SEND 2U              // @state STATE_SEND
+#define STATE_SEND_TIMESTAMP 3U    // @state STATE_SEND_TIMESTAMP
+#define STATE_RECEIVE 4U           // @state STATE_RECEIVE
+#define STATE_RECEIVE_TIMESTAMP 5U // @state STATE_RECEIVE_TIMESTAMP
 
 static uint8_t current_state;
 static time_t next_time;
 
 void states_init(void)
 {
-    current_state = STATE_RECEIVING;
+    next_time = time(0) + 2U;
+    current_state = STATE_WAIT; // @transition . -> STATE_WAIT
 }
 
 void states_update(void)
 {
-    // @transition STATE_RECEIVING -> STATE_SENDING { trigger: "receive", count_sensitive: false }
-    current_state = STATE_SENDING;
+    if (current_state == STATE_RECEIVE)
+    {
+        current_state = STATE_RECEIVE_TIMESTAMP; // @transition STATE_RECEIVE -> STATE_RECEIVE_TIMESTAMP [receive]
+    }
 }
 
 void states_run(void)
 {
     switch (current_state)
     {
-    case STATE_RECEIVING: // @state STATE_RECEIVING { initial: true }
-        printf("state: receiving\n");
-        next_time = time(0) + 2U;
-        break;
-
-    case STATE_SENDING: // @state STATE_SENDING
-        printf("state: sending\n");
-
+    case STATE_WAIT:
         if (time(0) >= next_time)
         {
-            current_state = STATE_RECEIVING; // @transition STATE_SENDING -> STATE_RECEIVING { trigger: "timeout", value: 2 }
+            current_state = STATE_SEND; // @transition STATE_WAIT -> STATE_SEND [timeout, value=2]
+        }
+        break;
+
+    case STATE_SEND:
+        // send message
+        if (true)
+        {
+            current_state = STATE_SEND_TIMESTAMP; // @transition STATE_SEND -> STATE_SEND_TIMESTAMP [transmit]
+        }
+        break;
+
+    case STATE_SEND_TIMESTAMP:
+        // get send timestamp
+        if (true)
+        {
+            current_state = STATE_RECEIVE; // @transition STATE_SEND_TIMESTAMP -> STATE_RECEIVE
+        }
+        break;
+
+    case STATE_RECEIVE_TIMESTAMP:
+        // get receive timestamp
+        if (true)
+        {
+            next_time = time(0) + 2U;
+            current_state = STATE_WAIT; // @transition STATE_RECEIVE_TIMESTAMP -> STATE_WAIT
         }
         break;
     }

@@ -28,121 +28,334 @@ protected:
     }
 };
 
-TEST_F(StateTest, STATE_RECEIVING__STATE_SENDING__ExpectedIsReceived)
+TEST_F(StateTest, STATE_WAIT__STATE_SEND__TimeoutEqualsExpectedValue)
 {
 
-    // [Step 1]: STATE_RECEIVING: Expected is received. ----------
-    ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
+    // [Step 1]: STATE_WAIT: Timeout equals expected value. ----------
+    ASSERT_EQ(STATE_GET(), STATE_WAIT);
 
-    double arg_1_1 = 0;
-    if (!TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1))
+    double arg_1_1 = 2;
+    if (!TRANSITION_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
     {
-        WARN("Transition undefined for STATE_RECEIVING -> STATE_SENDING");
+        WARN("Transition undefined for STATE_WAIT -> STATE_SEND");
     }
     HOOK_RUN(update);
 
-    ASSERT_EQ(STATE_GET(), STATE_SENDING);
+    ASSERT_EQ(STATE_GET(), STATE_SEND);
 
 }
 
-TEST_F(StateTest, STATE_RECEIVING__STATE_SENDING__NoMessageIsReceived)
+TEST_F(StateTest, STATE_WAIT__STATE_SEND__TimeoutLessThanExpected)
 {
 
-    // [Step 1]: STATE_RECEIVING: No message is received. ----------
-    ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
+    // [Step 1]: STATE_WAIT: Timeout less than expected. ----------
+    ASSERT_EQ(STATE_GET(), STATE_WAIT);
 
+    double arg_1_1 = 0.2;
+    if (!TRANSITION_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
+    {
+        WARN("Transition undefined for STATE_WAIT -> STATE_SEND");
+    }
+    HOOK_RUN(update);
 
-    ASSERT_NE(STATE_GET(), STATE_SENDING);
+    ASSERT_NE(STATE_GET(), STATE_SEND);
 
 }
 
-TEST_F(StateTest, STATE_SENDING__STATE_RECEIVING__TimeoutEqualsExpectedValue)
+TEST_F(StateTest, STATE_WAIT__STATE_SEND__TimeoutGreaterThanExpected)
 {
 
-    // [Step 1]: STATE_RECEIVING: Expected is received. ----------
-    ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
+    // [Step 1]: STATE_WAIT: Timeout greater than expected. ----------
+    ASSERT_EQ(STATE_GET(), STATE_WAIT);
 
-    double arg_1_1 = 0;
-    if (!TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1))
+    double arg_1_1 = 3.8;
+    if (!TRANSITION_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
     {
-        WARN("Transition undefined for STATE_RECEIVING -> STATE_SENDING");
+        WARN("Transition undefined for STATE_WAIT -> STATE_SEND");
     }
     HOOK_RUN(update);
 
-    ASSERT_EQ(STATE_GET(), STATE_SENDING);
-
-
-    // [Step 2]: STATE_SENDING: Timeout equals expected value. ----------
-    ASSERT_EQ(STATE_GET(), STATE_SENDING);
-
-    double arg_2_1 = 2;
-    if (!TRANSITION_RUN(STATE_SENDING, STATE_RECEIVING, &arg_2_1))
-    {
-        WARN("Transition undefined for STATE_SENDING -> STATE_RECEIVING");
-    }
-    HOOK_RUN(update);
-
-    ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
+    ASSERT_EQ(STATE_GET(), STATE_SEND);
 
 }
 
-TEST_F(StateTest, STATE_SENDING__STATE_RECEIVING__TimeoutLessThanExpected)
+TEST_F(StateTest, STATE_SEND__STATE_SEND_TIMESTAMP__ExpectedIsSent)
 {
 
-    // [Step 1]: STATE_RECEIVING: Expected is received. ----------
-    ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
+    // [Step 1]: STATE_WAIT: Timeout equals expected value. ----------
+    ASSERT_EQ(STATE_GET(), STATE_WAIT);
 
-    double arg_1_1 = 0;
-    if (!TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1))
+    double arg_1_1 = 2;
+    if (!TRANSITION_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
     {
-        WARN("Transition undefined for STATE_RECEIVING -> STATE_SENDING");
+        WARN("Transition undefined for STATE_WAIT -> STATE_SEND");
     }
     HOOK_RUN(update);
 
-    ASSERT_EQ(STATE_GET(), STATE_SENDING);
+    ASSERT_EQ(STATE_GET(), STATE_SEND);
 
 
-    // [Step 2]: STATE_SENDING: Timeout less than expected. ----------
-    ASSERT_EQ(STATE_GET(), STATE_SENDING);
+    // [Step 2]: STATE_SEND: Expected is sent. ----------
+    ASSERT_EQ(STATE_GET(), STATE_SEND);
 
-    double arg_2_1 = 0.2;
-    if (!TRANSITION_RUN(STATE_SENDING, STATE_RECEIVING, &arg_2_1))
+    double arg_2_1 = 0;
+    if (!TRANSITION_RUN(STATE_SEND, STATE_SEND_TIMESTAMP, &arg_2_1))
     {
-        WARN("Transition undefined for STATE_SENDING -> STATE_RECEIVING");
+        WARN("Transition undefined for STATE_SEND -> STATE_SEND_TIMESTAMP");
     }
     HOOK_RUN(update);
 
-    ASSERT_NE(STATE_GET(), STATE_RECEIVING);
+    ASSERT_EQ(STATE_GET(), STATE_SEND_TIMESTAMP);
 
 }
 
-TEST_F(StateTest, STATE_SENDING__STATE_RECEIVING__TimeoutGreaterThanExpected)
+TEST_F(StateTest, STATE_SEND_TIMESTAMP__STATE_RECEIVE__DoNothing)
 {
 
-    // [Step 1]: STATE_RECEIVING: Expected is received. ----------
-    ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
+    // [Step 1]: STATE_WAIT: Timeout equals expected value. ----------
+    ASSERT_EQ(STATE_GET(), STATE_WAIT);
 
-    double arg_1_1 = 0;
-    if (!TRANSITION_RUN(STATE_RECEIVING, STATE_SENDING, &arg_1_1))
+    double arg_1_1 = 2;
+    if (!TRANSITION_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
     {
-        WARN("Transition undefined for STATE_RECEIVING -> STATE_SENDING");
+        WARN("Transition undefined for STATE_WAIT -> STATE_SEND");
     }
     HOOK_RUN(update);
 
-    ASSERT_EQ(STATE_GET(), STATE_SENDING);
+    ASSERT_EQ(STATE_GET(), STATE_SEND);
 
 
-    // [Step 2]: STATE_SENDING: Timeout greater than expected. ----------
-    ASSERT_EQ(STATE_GET(), STATE_SENDING);
+    // [Step 2]: STATE_SEND: Expected is sent. ----------
+    ASSERT_EQ(STATE_GET(), STATE_SEND);
 
-    double arg_2_1 = 3.8;
-    if (!TRANSITION_RUN(STATE_SENDING, STATE_RECEIVING, &arg_2_1))
+    double arg_2_1 = 0;
+    if (!TRANSITION_RUN(STATE_SEND, STATE_SEND_TIMESTAMP, &arg_2_1))
     {
-        WARN("Transition undefined for STATE_SENDING -> STATE_RECEIVING");
+        WARN("Transition undefined for STATE_SEND -> STATE_SEND_TIMESTAMP");
     }
     HOOK_RUN(update);
 
-    ASSERT_EQ(STATE_GET(), STATE_RECEIVING);
+    ASSERT_EQ(STATE_GET(), STATE_SEND_TIMESTAMP);
+
+
+    // [Step 3]: STATE_SEND_TIMESTAMP: Do nothing. ----------
+    ASSERT_EQ(STATE_GET(), STATE_SEND_TIMESTAMP);
+
+
+    ASSERT_EQ(STATE_GET(), STATE_RECEIVE);
 
 }
 
+TEST_F(StateTest, STATE_RECEIVE__STATE_RECEIVE_TIMESTAMP__ExpectedIsReceived)
+{
+
+    // [Step 1]: STATE_WAIT: Timeout equals expected value. ----------
+    ASSERT_EQ(STATE_GET(), STATE_WAIT);
+
+    double arg_1_1 = 2;
+    if (!TRANSITION_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
+    {
+        WARN("Transition undefined for STATE_WAIT -> STATE_SEND");
+    }
+    HOOK_RUN(update);
+
+    ASSERT_EQ(STATE_GET(), STATE_SEND);
+
+
+    // [Step 2]: STATE_SEND: Expected is sent. ----------
+    ASSERT_EQ(STATE_GET(), STATE_SEND);
+
+    double arg_2_1 = 0;
+    if (!TRANSITION_RUN(STATE_SEND, STATE_SEND_TIMESTAMP, &arg_2_1))
+    {
+        WARN("Transition undefined for STATE_SEND -> STATE_SEND_TIMESTAMP");
+    }
+    HOOK_RUN(update);
+
+    ASSERT_EQ(STATE_GET(), STATE_SEND_TIMESTAMP);
+
+
+    // [Step 3]: STATE_SEND_TIMESTAMP: Do nothing. ----------
+    ASSERT_EQ(STATE_GET(), STATE_SEND_TIMESTAMP);
+
+
+    ASSERT_EQ(STATE_GET(), STATE_RECEIVE);
+
+
+    // [Step 4]: STATE_RECEIVE: Expected is received. ----------
+    ASSERT_EQ(STATE_GET(), STATE_RECEIVE);
+
+    double arg_4_1 = 0;
+    if (!TRANSITION_RUN(STATE_RECEIVE, STATE_RECEIVE_TIMESTAMP, &arg_4_1))
+    {
+        WARN("Transition undefined for STATE_RECEIVE -> STATE_RECEIVE_TIMESTAMP");
+    }
+    HOOK_RUN(update);
+
+    ASSERT_EQ(STATE_GET(), STATE_RECEIVE_TIMESTAMP);
+
+}
+
+TEST_F(StateTest, STATE_RECEIVE__STATE_RECEIVE_TIMESTAMP__NoMessageIsReceived)
+{
+
+    // [Step 1]: STATE_WAIT: Timeout equals expected value. ----------
+    ASSERT_EQ(STATE_GET(), STATE_WAIT);
+
+    double arg_1_1 = 2;
+    if (!TRANSITION_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
+    {
+        WARN("Transition undefined for STATE_WAIT -> STATE_SEND");
+    }
+    HOOK_RUN(update);
+
+    ASSERT_EQ(STATE_GET(), STATE_SEND);
+
+
+    // [Step 2]: STATE_SEND: Expected is sent. ----------
+    ASSERT_EQ(STATE_GET(), STATE_SEND);
+
+    double arg_2_1 = 0;
+    if (!TRANSITION_RUN(STATE_SEND, STATE_SEND_TIMESTAMP, &arg_2_1))
+    {
+        WARN("Transition undefined for STATE_SEND -> STATE_SEND_TIMESTAMP");
+    }
+    HOOK_RUN(update);
+
+    ASSERT_EQ(STATE_GET(), STATE_SEND_TIMESTAMP);
+
+
+    // [Step 3]: STATE_SEND_TIMESTAMP: Do nothing. ----------
+    ASSERT_EQ(STATE_GET(), STATE_SEND_TIMESTAMP);
+
+
+    ASSERT_EQ(STATE_GET(), STATE_RECEIVE);
+
+
+    // [Step 4]: STATE_RECEIVE: No message is received. ----------
+    ASSERT_EQ(STATE_GET(), STATE_RECEIVE);
+
+
+    ASSERT_NE(STATE_GET(), STATE_RECEIVE_TIMESTAMP);
+
+}
+
+TEST_F(StateTest, STATE_RECEIVE__STATE_RECEIVE_TIMESTAMP__MoreMessagesAreReceivedThanExpected)
+{
+
+    // [Step 1]: STATE_WAIT: Timeout equals expected value. ----------
+    ASSERT_EQ(STATE_GET(), STATE_WAIT);
+
+    double arg_1_1 = 2;
+    if (!TRANSITION_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
+    {
+        WARN("Transition undefined for STATE_WAIT -> STATE_SEND");
+    }
+    HOOK_RUN(update);
+
+    ASSERT_EQ(STATE_GET(), STATE_SEND);
+
+
+    // [Step 2]: STATE_SEND: Expected is sent. ----------
+    ASSERT_EQ(STATE_GET(), STATE_SEND);
+
+    double arg_2_1 = 0;
+    if (!TRANSITION_RUN(STATE_SEND, STATE_SEND_TIMESTAMP, &arg_2_1))
+    {
+        WARN("Transition undefined for STATE_SEND -> STATE_SEND_TIMESTAMP");
+    }
+    HOOK_RUN(update);
+
+    ASSERT_EQ(STATE_GET(), STATE_SEND_TIMESTAMP);
+
+
+    // [Step 3]: STATE_SEND_TIMESTAMP: Do nothing. ----------
+    ASSERT_EQ(STATE_GET(), STATE_SEND_TIMESTAMP);
+
+
+    ASSERT_EQ(STATE_GET(), STATE_RECEIVE);
+
+
+    // [Step 4]: STATE_RECEIVE: More messages are received than expected. ----------
+    ASSERT_EQ(STATE_GET(), STATE_RECEIVE);
+
+    double arg_4_1 = 0;
+    if (!TRANSITION_RUN(STATE_RECEIVE, STATE_RECEIVE_TIMESTAMP, &arg_4_1))
+    {
+        WARN("Transition undefined for STATE_RECEIVE -> STATE_RECEIVE_TIMESTAMP");
+    }
+    HOOK_RUN(update);
+    double arg_4_2 = 0;
+    if (!TRANSITION_RUN(STATE_RECEIVE, STATE_RECEIVE_TIMESTAMP, &arg_4_2))
+    {
+        WARN("Transition undefined for STATE_RECEIVE -> STATE_RECEIVE_TIMESTAMP");
+    }
+    HOOK_RUN(update);
+
+    ASSERT_NE(STATE_GET(), STATE_RECEIVE_TIMESTAMP);
+
+}
+
+TEST_F(StateTest, STATE_RECEIVE_TIMESTAMP__STATE_WAIT__DoNothing)
+{
+
+    // [Step 1]: STATE_WAIT: Timeout equals expected value. ----------
+    ASSERT_EQ(STATE_GET(), STATE_WAIT);
+
+    double arg_1_1 = 2;
+    if (!TRANSITION_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
+    {
+        WARN("Transition undefined for STATE_WAIT -> STATE_SEND");
+    }
+    HOOK_RUN(update);
+
+    ASSERT_EQ(STATE_GET(), STATE_SEND);
+
+
+    // [Step 2]: STATE_SEND: Expected is sent. ----------
+    ASSERT_EQ(STATE_GET(), STATE_SEND);
+
+    double arg_2_1 = 0;
+    if (!TRANSITION_RUN(STATE_SEND, STATE_SEND_TIMESTAMP, &arg_2_1))
+    {
+        WARN("Transition undefined for STATE_SEND -> STATE_SEND_TIMESTAMP");
+    }
+    HOOK_RUN(update);
+
+    ASSERT_EQ(STATE_GET(), STATE_SEND_TIMESTAMP);
+
+
+    // [Step 3]: STATE_SEND_TIMESTAMP: Do nothing. ----------
+    ASSERT_EQ(STATE_GET(), STATE_SEND_TIMESTAMP);
+
+
+    ASSERT_EQ(STATE_GET(), STATE_RECEIVE);
+
+
+    // [Step 4]: STATE_RECEIVE: Expected is received. ----------
+    ASSERT_EQ(STATE_GET(), STATE_RECEIVE);
+
+    double arg_4_1 = 0;
+    if (!TRANSITION_RUN(STATE_RECEIVE, STATE_RECEIVE_TIMESTAMP, &arg_4_1))
+    {
+        WARN("Transition undefined for STATE_RECEIVE -> STATE_RECEIVE_TIMESTAMP");
+    }
+    HOOK_RUN(update);
+
+    ASSERT_EQ(STATE_GET(), STATE_RECEIVE_TIMESTAMP);
+
+
+    // [Step 5]: STATE_RECEIVE_TIMESTAMP: Do nothing. ----------
+    ASSERT_EQ(STATE_GET(), STATE_RECEIVE_TIMESTAMP);
+
+
+    ASSERT_EQ(STATE_GET(), STATE_WAIT);
+
+}
+
+
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

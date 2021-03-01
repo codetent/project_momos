@@ -3,23 +3,25 @@
 ?definition : state
             | transition
 
-state         : "@state" identifier [ options ]
-transition    : "@transition" identifier "->" identifier [ options ]
+state         : "@state" identifier [ "[" option "]" ]
+transition    : "@transition" ( identifier | implicit ) "->" identifier [ "[" trigger "]" ]
 
-options       : "{" [ key_val_pair ( "," key_val_pair )* ","? ] "}"
-key_val_pair : identifier ":" (literal | options)
+trigger       : identifier ( "," option )*
+option        : flag | pair
+pair          : identifier "=" literal
+flag          : NOT? NAME
 
-?literal      : boolean | integer | float | character | string
+?literal      : flag | integer | float | character | string
+implicit      : "."
 identifier    : NAME
 string        : "\"" STRING "\""
 character     : "'" CHAR "'"
 float         : SIGNED_FLOAT
 integer       : SIGNED_INT
-boolean       : BOOLEAN
 
+NOT           : "!"
 STRING         : /[\x21\x23-\x7E]+/
 CHAR           : /[\x21-\x26\x28-\x7E]/
-BOOLEAN        : "true" | "false"
 
 %import python.NAME
 
