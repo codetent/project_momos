@@ -48,9 +48,9 @@ class DummyTrigger(Trigger, short_name=None):
     """
     @failure_mode(fails=False)
     def ok(self) -> None:
-        """Do nothing.
+        """Just execute transition.
         """
-        return []
+        return [None]
 
 
 @dataclass
