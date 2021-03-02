@@ -72,7 +72,8 @@ TEST_F(StateTest, {{ last_step.transition.from_state.id }}__{{ last_step.transit
 {% endfor %}
 
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     ::testing::InitGoogleTest(&argc, argv);
     ::testing::AddGlobalTestEnvironment(new StateEnv());
     return RUN_ALL_TESTS();
