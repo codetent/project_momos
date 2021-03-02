@@ -1,7 +1,6 @@
 #include <iostream>
 #include <gtest/gtest.h>
 
-#include "momos/io.hpp"
 #include "momos/macros.hpp"
 
 {% for include in includes %}
@@ -30,11 +29,7 @@ class StateTest : public ::testing::Test
 protected:
     void SetUp() override
     {
-        io::in.reset();
-        io::out.reset();
-
         HOOK_RUN(before);
-        HOOK_RUN(progress);
     }
 
     void TearDown() override
