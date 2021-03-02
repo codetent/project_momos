@@ -57,25 +57,26 @@ class DummyTrigger(Trigger, short_name=None):
 class TimeoutTrigger(Trigger, short_name='timeout'):
     """Trigger type which is coupled with a specified timeout.
     """
-    value: int
+    min_factor = 0.1
+    max_factor = 1.9
 
     @failure_mode(fails=False)
     def ok(self) -> int:
         """Timeout equals expected value.
         """
-        return [self.value]
+        return [1.0]
 
     @failure_mode
     def earlier(self) -> int:
         """Timeout less than expected.
         """
-        return [self.value * 0.1]
+        return [self.min_factor]
 
     @failure_mode(fails=False)
     def later(self) -> int:
         """Timeout greater than expected.
         """
-        return [self.value * 1.9]
+        return [self.max_factor]
 
 
 @dataclass

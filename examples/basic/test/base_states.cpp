@@ -32,26 +32,24 @@ HOOK(before_all)
 
 HOOK(before)
 {
-    logic_init();
+    states_init();
 }
 
 HOOK(progress)
 {
-    logic_run();
+    states_run();
 }
 
 /* ------------------------------- Transitions ------------------------------ */
 
 PREPARE(STATE_WAIT, STATE_SEND)
 {
-    sleep(FLOAT_ARG);
+    sleep(2.0 * FLOAT_ARG);
 }
 
 PREPARE(STATE_RECEIVE, STATE_RECEIVE_TIMESTAMP)
 {
-    EXPECT_CALL(hal_mock_obj, receive)
-        .WillOnce(DoAll(SetArgPointee<0>(12), Return(true)))
-        .WillRepeatedly(Return(false));
+    states_update();
 }
 
 PREPARE(STATE_SEND, STATE_SEND_TIMESTAMP)

@@ -1,7 +1,6 @@
 #include <iostream>
 #include <gtest/gtest.h>
 
-#include "momos/io.hpp"
 #include "momos/macros.hpp"
 
 #include "base_states.cpp"
@@ -28,11 +27,7 @@ class StateTest : public ::testing::Test
 protected:
     void SetUp() override
     {
-        io::in.reset();
-        io::out.reset();
-
         HOOK_RUN(before);
-        HOOK_RUN(progress);
     }
 
     void TearDown() override
@@ -47,7 +42,7 @@ TEST_F(StateTest, STATE_WAIT__STATE_SEND__TimeoutEqualsExpectedValue)
     // [Step 1]: STATE_WAIT: Timeout equals expected value. ----------
     ASSERT_EQ(STATE_GET(), STATE_WAIT);
 
-    double arg_1_1 = 2;
+    double arg_1_1 = 1.0;
     if (!PREPARE_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
     {
         WARN("Transition preparation undefined for STATE_WAIT -> STATE_SEND");
@@ -64,7 +59,7 @@ TEST_F(StateTest, STATE_WAIT__STATE_SEND__TimeoutLessThanExpected)
     // [Step 1]: STATE_WAIT: Timeout less than expected. ----------
     ASSERT_EQ(STATE_GET(), STATE_WAIT);
 
-    double arg_1_1 = 0.2;
+    double arg_1_1 = 0.1;
     if (!PREPARE_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
     {
         WARN("Transition preparation undefined for STATE_WAIT -> STATE_SEND");
@@ -81,7 +76,7 @@ TEST_F(StateTest, STATE_WAIT__STATE_SEND__TimeoutGreaterThanExpected)
     // [Step 1]: STATE_WAIT: Timeout greater than expected. ----------
     ASSERT_EQ(STATE_GET(), STATE_WAIT);
 
-    double arg_1_1 = 3.8;
+    double arg_1_1 = 1.9;
     if (!PREPARE_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
     {
         WARN("Transition preparation undefined for STATE_WAIT -> STATE_SEND");
@@ -98,7 +93,7 @@ TEST_F(StateTest, STATE_SEND__STATE_SEND_TIMESTAMP__ExpectedIsSent)
     // [Step 1]: STATE_WAIT: Timeout equals expected value. ----------
     ASSERT_EQ(STATE_GET(), STATE_WAIT);
 
-    double arg_1_1 = 2;
+    double arg_1_1 = 1.0;
     if (!PREPARE_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
     {
         WARN("Transition preparation undefined for STATE_WAIT -> STATE_SEND");
@@ -128,7 +123,7 @@ TEST_F(StateTest, STATE_SEND_TIMESTAMP__STATE_RECEIVE__JustExecuteTransition)
     // [Step 1]: STATE_WAIT: Timeout equals expected value. ----------
     ASSERT_EQ(STATE_GET(), STATE_WAIT);
 
-    double arg_1_1 = 2;
+    double arg_1_1 = 1.0;
     if (!PREPARE_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
     {
         WARN("Transition preparation undefined for STATE_WAIT -> STATE_SEND");
@@ -171,7 +166,7 @@ TEST_F(StateTest, STATE_RECEIVE__STATE_RECEIVE_TIMESTAMP__ExpectedIsReceived)
     // [Step 1]: STATE_WAIT: Timeout equals expected value. ----------
     ASSERT_EQ(STATE_GET(), STATE_WAIT);
 
-    double arg_1_1 = 2;
+    double arg_1_1 = 1.0;
     if (!PREPARE_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
     {
         WARN("Transition preparation undefined for STATE_WAIT -> STATE_SEND");
@@ -227,7 +222,7 @@ TEST_F(StateTest, STATE_RECEIVE__STATE_RECEIVE_TIMESTAMP__NoMessageIsReceived)
     // [Step 1]: STATE_WAIT: Timeout equals expected value. ----------
     ASSERT_EQ(STATE_GET(), STATE_WAIT);
 
-    double arg_1_1 = 2;
+    double arg_1_1 = 1.0;
     if (!PREPARE_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
     {
         WARN("Transition preparation undefined for STATE_WAIT -> STATE_SEND");
@@ -277,7 +272,7 @@ TEST_F(StateTest, STATE_RECEIVE__STATE_RECEIVE_TIMESTAMP__MoreMessagesAreReceive
     // [Step 1]: STATE_WAIT: Timeout equals expected value. ----------
     ASSERT_EQ(STATE_GET(), STATE_WAIT);
 
-    double arg_1_1 = 2;
+    double arg_1_1 = 1.0;
     if (!PREPARE_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
     {
         WARN("Transition preparation undefined for STATE_WAIT -> STATE_SEND");
@@ -339,7 +334,7 @@ TEST_F(StateTest, STATE_RECEIVE_TIMESTAMP__STATE_WAIT__JustExecuteTransition)
     // [Step 1]: STATE_WAIT: Timeout equals expected value. ----------
     ASSERT_EQ(STATE_GET(), STATE_WAIT);
 
-    double arg_1_1 = 2;
+    double arg_1_1 = 1.0;
     if (!PREPARE_RUN(STATE_WAIT, STATE_SEND, &arg_1_1))
     {
         WARN("Transition preparation undefined for STATE_WAIT -> STATE_SEND");
@@ -404,7 +399,8 @@ TEST_F(StateTest, STATE_RECEIVE_TIMESTAMP__STATE_WAIT__JustExecuteTransition)
 
 
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     ::testing::InitGoogleTest(&argc, argv);
     ::testing::AddGlobalTestEnvironment(new StateEnv());
     return RUN_ALL_TESTS();

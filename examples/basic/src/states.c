@@ -37,7 +37,7 @@ void states_run(void)
     case STATE_WAIT:
         if (time(0) >= next_time)
         {
-            current_state = STATE_SEND; // @transition STATE_WAIT -> STATE_SEND [timeout, value=2]
+            current_state = STATE_SEND; // @transition STATE_WAIT -> STATE_SEND [timeout]
         }
         break;
 
