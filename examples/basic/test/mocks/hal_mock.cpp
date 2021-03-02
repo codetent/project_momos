@@ -1,19 +1,19 @@
-
-#include <stdio.h>
 #include "momos/io.hpp"
+#include "hal_mock.hpp"
 
 extern "C"
 {
 #include "hal.h"
 }
 
+extern hal_mock hal_mock_obj;
+
 void transmit(int a)
 {
-    io::out.provide(&a, (uint32_t)sizeof(int), 0U);
+    hal_mock_obj.transmit(a);
 }
 
 bool receive(int *a)
 {
-    uint32_t length;
-    return io::in.request(a, &length, NULL);
+    return hal_mock_obj.receive(a);
 }

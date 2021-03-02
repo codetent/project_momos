@@ -1,7 +1,10 @@
-#include "momos/macros.hpp"
-
 #include <stdio.h>
 #include <unistd.h>
+
+#include <gmock/gmock.h>
+
+#include "momos/macros.hpp"
+#include "mocks/hal_mock.hpp"
 
 extern "C"
 {
@@ -10,6 +13,10 @@ extern "C"
 #include "../src/states.c"
 }
 
+using namespace ::testing;
+
+hal_mock hal_mock_obj;
+
 STATE(uint8_t)
 {
     return current_state;
@@ -17,32 +24,37 @@ STATE(uint8_t)
 
 /* ---------------------------------- Hooks --------------------------------- */
 
-HOOK(init)
+HOOK(before_all)
+{
+    EXPECT_CALL(hal_mock_obj, receive)
+        .WillRepeatedly(Return(false));
+}
+
+HOOK(before)
 {
     logic_init();
 }
 
-HOOK(update)
+HOOK(progress)
 {
     logic_run();
 }
 
 /* ------------------------------- Transitions ------------------------------ */
 
-TRANSITION(STATE_WAIT, STATE_SEND)
+PREPARE(STATE_WAIT, STATE_SEND)
 {
     sleep(FLOAT_ARG);
 }
 
-TRANSITION(STATE_RECEIVE, STATE_RECEIVE_TIMESTAMP)
+PREPARE(STATE_RECEIVE, STATE_RECEIVE_TIMESTAMP)
 {
-    uint32_t value = 12;
-    io::in.provide(&value, sizeof(value), 0);
+    EXPECT_CALL(hal_mock_obj, receive)
+        .WillOnce(DoAll(SetArgPointee<0>(12), Return(true)))
+        .WillRepeatedly(Return(false));
 }
 
-/* --------------------------------- Checks --------------------------------- */
-
-CHECK(STATE_SEND, STATE_SEND_TIMESTAMP)
+PREPARE(STATE_SEND, STATE_SEND_TIMESTAMP)
 {
-    ASSERT_EQ(io::out.available(), true);
+    EXPECT_CALL(hal_mock_obj, transmit(42));
 }

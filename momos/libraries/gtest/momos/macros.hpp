@@ -139,44 +139,23 @@ public:
 
 /* ------------------------------- Transitions ------------------------------ */
 
-#define TRANSITION_NAME(a, b) __transition_##a##_##b
-#define TRANSITION_KEY(a, b) "__transition_" #a "_" #b
-#define TRANSITION_RUN(a, b, arg) ComponentRegistry::getInstance()->runComponent(TRANSITION_KEY(a, b), arg, NULL)
-#define TRANSITION(a, b)                                                                              \
-    class TRANSITION_NAME(a, b)                                                                       \
-    {                                                                                                 \
-    private:                                                                                          \
-        static ComponentInfo *info;                                                                   \
-                                                                                                      \
-    public:                                                                                           \
-        static void run(void *arg, void *out);                                                        \
-    };                                                                                                \
-                                                                                                      \
-    ComponentInfo *TRANSITION_NAME(a, b)::info = ComponentRegistry::getInstance()->createAndRegister( \
-        TRANSITION_KEY(a, b),                                                                         \
-        TRANSITION_NAME(a, b)::run);                                                                  \
-                                                                                                      \
-    void TRANSITION_NAME(a, b)::run(void *arg, void *out)
-
-/* ---------------------------------- Check --------------------------------- */
-
-#define CHECK_NAME(a, b) __check_##a##_##b
-#define CHECK_KEY(a, b) "__check_" #a "_" #b
-#define CHECK_RUN(a, b) ComponentRegistry::getInstance()->runComponent(CHECK_KEY(a, b), NULL, NULL)
-#define CHECK(a, b)                                                                              \
-    class CHECK_NAME(a, b)                                                                       \
-    {                                                                                            \
-    private:                                                                                     \
-        static ComponentInfo *info;                                                              \
-                                                                                                 \
-    public:                                                                                      \
-        static void run(void *arg, void *out);                                                   \
-    };                                                                                           \
-                                                                                                 \
-    ComponentInfo *CHECK_NAME(a, b)::info = ComponentRegistry::getInstance()->createAndRegister( \
-        CHECK_KEY(a, b),                                                                         \
-        CHECK_NAME(a, b)::run);                                                                  \
-                                                                                                 \
-    void CHECK_NAME(a, b)::run(void *arg, void *out)
+#define PREPARE_NAME(a, b) __prepare_##a##_##b
+#define PREPARE_KEY(a, b) "__prepare_" #a "_" #b
+#define PREPARE_RUN(a, b, arg) ComponentRegistry::getInstance()->runComponent(PREPARE_KEY(a, b), arg, NULL)
+#define PREPARE(a, b)                                                                              \
+    class PREPARE_NAME(a, b)                                                                       \
+    {                                                                                              \
+    private:                                                                                       \
+        static ComponentInfo *info;                                                                \
+                                                                                                   \
+    public:                                                                                        \
+        static void run(void *arg, void *out);                                                     \
+    };                                                                                             \
+                                                                                                   \
+    ComponentInfo *PREPARE_NAME(a, b)::info = ComponentRegistry::getInstance()->createAndRegister( \
+        PREPARE_KEY(a, b),                                                                         \
+        PREPARE_NAME(a, b)::run);                                                                  \
+                                                                                                   \
+    void PREPARE_NAME(a, b)::run(void *arg, void *out)
 
 #endif // __MOMOS_MACROS__

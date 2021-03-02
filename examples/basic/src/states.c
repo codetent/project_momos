@@ -6,6 +6,7 @@
 #include <time.h>
 
 #include "hal.h"
+#include "messages.h"
 
 #define STATE_WAIT 1U              // @state STATE_WAIT [initial]
 #define STATE_SEND 2U              // @state STATE_SEND
@@ -41,8 +42,8 @@ void states_run(void)
         break;
 
     case STATE_SEND:
-        // send message
-        transmit(42);
+        send_message(42);
+
         if (true)
         {
             current_state = STATE_SEND_TIMESTAMP; // @transition STATE_SEND -> STATE_SEND_TIMESTAMP [transmit]

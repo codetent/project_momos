@@ -12,6 +12,19 @@
 #define WARN(x) std::cerr << "[     WARN ] " << x << std::endl
 
 
+class StateEnv : public ::testing::Environment
+{
+public:
+    void SetUp() override {
+        HOOK_RUN(before_all);
+    }
+
+    void TearDown() override {
+        HOOK_RUN(after_all);
+    }
+};
+
+
 class StateTest : public ::testing::Test
 {
 protected:
@@ -20,13 +33,13 @@ protected:
         io::in.reset();
         io::out.reset();
 
-        HOOK_RUN(init);
-        HOOK_RUN(update);
+        HOOK_RUN(before);
+        HOOK_RUN(progress);
     }
 
     void TearDown() override
     {
-        HOOK_RUN(deinit);
+        HOOK_RUN(after);
     }
 };
 
@@ -45,11 +58,11 @@ TEST_F(StateTest, {{ last_step.transition.from_state.id }}__{{ last_step.transit
     {% for arg in step.arguments %}
     {% set arg_name = 'arg_' ~ step_index ~ '_' ~ loop.index %}
     double {{ arg_name }} = {{ arg | default('0', true) }};
-    if (!TRANSITION_RUN({{ from_state.id }}, {{ to_state.id }}, &{{ arg_name }}))
+    if (!PREPARE_RUN({{ from_state.id }}, {{ to_state.id }}, &{{ arg_name }}))
     {
-        WARN("Transition undefined for {{ from_state.id }} -> {{ to_state.id }}");
+        WARN("Transition preparation undefined for {{ from_state.id }} -> {{ to_state.id }}");
     }
-    HOOK_RUN(update);
+    HOOK_RUN(progress);
     {% endfor %}
 
     {% if step.mode.fails %}
@@ -57,8 +70,6 @@ TEST_F(StateTest, {{ last_step.transition.from_state.id }}__{{ last_step.transit
     {% else %}
     ASSERT_EQ(STATE_GET(), {{ to_state.id }});
     {% endif %}
-
-    CHECK_RUN({{ from_state.id }}, {{ to_state.id }});
 
     {% endfor %}
 }
@@ -68,5 +79,6 @@ TEST_F(StateTest, {{ last_step.transition.from_state.id }}__{{ last_step.transit
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
+    ::testing::AddGlobalTestEnvironment(new StateEnv());
     return RUN_ALL_TESTS();
 }

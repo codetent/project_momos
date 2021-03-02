@@ -16,7 +16,6 @@ void logic_run(void)
     bool available;
 
     available = receive(&received);
-
     if (available && received == 12)
     {
         states_update();

@@ -45,7 +45,8 @@ add_executable(tests test/test_states.cpp
                      src/messages.c
                      src/logic.c
                      ${MOMOS_INCLUDE}/momos/io.cpp)
-target_include_directories(tests PRIVATE "${MOMOS_INCLUDE}")
+target_include_directories(tests PRIVATE "${MOMOS_INCLUDE}"
+                                         test)
 target_link_libraries(tests gmock
                             gtest
                             pthread)
