@@ -48,7 +48,7 @@ TEST_F(StateTest, {{ last_step.transition.from_state.id }}__{{ last_step.transit
     {% set step_index = loop.index %}
 
     // [Step {{ step_index }}]: {{ step.description }} ----------
-    ASSERT_EQ(STATE_GET(), {{ from_state.id }});
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET({{ from_state.id }}));
 
     {% for arg in step.arguments %}
     {% set arg_name = 'arg_' ~ step_index ~ '_' ~ loop.index %}
@@ -61,9 +61,9 @@ TEST_F(StateTest, {{ last_step.transition.from_state.id }}__{{ last_step.transit
     {% endfor %}
 
     {% if step.mode.fails %}
-    ASSERT_NE(STATE_GET(), {{ to_state.id }});
+    ASSERT_NE(STATE_VAR_GET(), STATE_GET({{ to_state.id }}));
     {% else %}
-    ASSERT_EQ(STATE_GET(), {{ to_state.id }});
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET({{ to_state.id }}));
     {% endif %}
 
     {% endfor %}

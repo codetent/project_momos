@@ -17,10 +17,15 @@ using namespace ::testing;
 
 hal_mock hal_mock_obj;
 
-STATE(uint8_t)
-{
-    return current_state;
-}
+/* --------------------------------- States --------------------------------- */
+
+STATE(WAIT, STATE_WAIT);
+STATE(SEND, STATE_SEND);
+STATE(SEND_TIMESTAMP, STATE_SEND_TIMESTAMP);
+STATE(RECEIVE, STATE_RECEIVE);
+STATE(RECEIVE_TIMESTAMP, STATE_RECEIVE_TIMESTAMP);
+
+STATE_VAR(current_state);
 
 /* ---------------------------------- Hooks --------------------------------- */
 
@@ -42,17 +47,17 @@ HOOK(progress)
 
 /* ------------------------------- Transitions ------------------------------ */
 
-PREPARE(STATE_WAIT, STATE_SEND)
+PREPARE(WAIT, SEND)
 {
     sleep(2.0 * FLOAT_ARG);
 }
 
-PREPARE(STATE_RECEIVE, STATE_RECEIVE_TIMESTAMP)
+PREPARE(RECEIVE, RECEIVE_TIMESTAMP)
 {
     states_update();
 }
 
-PREPARE(STATE_SEND, STATE_SEND_TIMESTAMP)
+PREPARE(SEND, SEND_TIMESTAMP)
 {
     EXPECT_CALL(hal_mock_obj, transmit(42));
 }

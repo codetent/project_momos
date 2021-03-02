@@ -51,6 +51,11 @@ public:
         return &(this->components[name] = {.run = run});
     }
 
+    bool hasComponent(std::string name)
+    {
+        return this->components.find(name) != this->components.end();
+    }
+
     bool runComponent(std::string name, void *arg, void *out)
     {
         auto component = this->components.find(name);
@@ -71,36 +76,30 @@ public:
 
 /* ---------------------------------- State --------------------------------- */
 
-#define STATE_NAME __state
-#define STATE_KEY "__state"
-#define STATE_GET() STATE_NAME::getState()
-#define STATE(T)                                                                             \
-    class STATE_NAME                                                                         \
-    {                                                                                        \
-    private:                                                                                 \
-        static ComponentInfo *info;                                                          \
-                                                                                             \
-        static T readState(void);                                                            \
-                                                                                             \
-    public:                                                                                  \
-        static void run(void *arg, void *out)                                                \
-        {                                                                                    \
-            *(T *)out = readState();                                                         \
-        }                                                                                    \
-                                                                                             \
-        static T getState(void)                                                              \
-        {                                                                                    \
-            T state;                                                                         \
-            ComponentRegistry::getInstance()->runComponent(STATE_KEY, NULL, (void *)&state); \
-            return state;                                                                    \
-        }                                                                                    \
-    };                                                                                       \
-                                                                                             \
-    ComponentInfo *STATE_NAME::info = ComponentRegistry::getInstance()->createAndRegister(   \
-        STATE_KEY,                                                                           \
-        STATE_NAME::run);                                                                    \
-                                                                                             \
-    T STATE_NAME::readState(void)
+#define STATE_NAME(x) __state_##x
+#define STATE_KEY(x) "__state_" #x
+#define STATE_GET(x) STATE_NAME(x)::get()
+#define STATE(x, v)                                                                           \
+    class STATE_NAME(x)                                                                       \
+    {                                                                                         \
+    private:                                                                                  \
+        static ComponentInfo *info;                                                           \
+                                                                                              \
+    public:                                                                                   \
+        static auto get(void)                                                                 \
+        {                                                                                     \
+            return v;                                                                         \
+        }                                                                                     \
+                                                                                              \
+        static void run(void *arg, void *out) {}                                              \
+    };                                                                                        \
+                                                                                              \
+    ComponentInfo *STATE_NAME(x)::info = ComponentRegistry::getInstance()->createAndRegister( \
+        STATE_KEY(x),                                                                         \
+        STATE_NAME(x)::run)
+
+#define STATE_VAR_GET() STATE_GET(__current)
+#define STATE_VAR(v) STATE(__current, v)
 
 /* ---------------------------------- Hooks --------------------------------- */
 
