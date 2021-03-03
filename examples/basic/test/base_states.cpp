@@ -3,7 +3,7 @@
 
 #include <gmock/gmock.h>
 
-#include "momos/macros.hpp"
+#include "momos.hpp"
 #include "mocks/hal_mock.hpp"
 
 extern "C"
@@ -29,12 +29,6 @@ STATE_VAR(current_state);
 
 /* ---------------------------------- Hooks --------------------------------- */
 
-HOOK(before_all)
-{
-    EXPECT_CALL(hal_mock_obj, receive)
-        .WillRepeatedly(Return(false));
-}
-
 HOOK(before)
 {
     states_init();
@@ -59,5 +53,5 @@ PREPARE(RECEIVE, RECEIVE_TIMESTAMP)
 
 PREPARE(SEND, SEND_TIMESTAMP)
 {
-    EXPECT_CALL(hal_mock_obj, transmit(42));
+    EXPECT_CALL(hal_mock_obj, transmit(42)).Times(1);
 }

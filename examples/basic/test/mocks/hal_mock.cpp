@@ -1,4 +1,3 @@
-#include "momos/io.hpp"
 #include "hal_mock.hpp"
 
 extern "C"
