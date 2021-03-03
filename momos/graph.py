@@ -98,7 +98,7 @@ class StateGraph:
         self.graph.add_edge(
             IdStrProxy(transition.from_state),
             IdStrProxy(transition.to_state),
-            label=(transition.trigger.id or ''),
+            label=transition.trigger.typ,
         )
 
     def get_transition(self, from_state: State, to_state: State) -> Transition:

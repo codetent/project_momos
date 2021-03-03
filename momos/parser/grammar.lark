@@ -6,7 +6,7 @@
 state         : "@state" identifier [ "[" option "]" ]
 transition    : "@transition" ( identifier | implicit ) "->" identifier [ "[" trigger "]" ]
 
-trigger       : identifier ( "," option )*
+trigger       : identifier ["#" identifier] ( "," option )*
 option        : flag | pair
 pair          : identifier "=" literal
 flag          : NOT? NAME

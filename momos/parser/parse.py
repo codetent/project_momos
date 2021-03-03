@@ -12,7 +12,7 @@ from ..graph import StateGraph
 from ..utils import Resolvable
 
 if TYPE_CHECKING:
-    from typing import Dict, Tuple
+    from typing import Tuple
 
 
 class GrammarTransformer(Transformer):
@@ -42,8 +42,13 @@ class GrammarTransformer(Transformer):
         return Transition(from_state=from_state, to_state=to_state, trigger=trigger)
 
     def trigger(self, items) -> Trigger:
-        typ, *options = items
-        return Trigger.of(typ, **dict(options))
+        if len(items) > 1 and isinstance(items[1], str):
+            typ, variant, *options = items
+        else:
+            typ, *options = items
+            variant = None
+
+        return Trigger.of(typ, variant=variant, **dict(options))
 
     def option(self, items):
         return items[0]

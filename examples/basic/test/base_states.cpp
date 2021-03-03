@@ -44,12 +44,12 @@ PREPARE(WAIT, SEND)
     sleep(2.0 * FLOAT_ARG);
 }
 
-PREPARE(RECEIVE, RECEIVE_TIMESTAMP)
+PREPARE(RECEIVE, RECEIVE_TIMESTAMP, receive)
 {
     states_update();
 }
 
-PREPARE(SEND, SEND_TIMESTAMP)
+PREPARE(SEND, SEND_TIMESTAMP, transmit, correct)
 {
     EXPECT_CALL(hal_mock_obj, transmit(42)).Times(1);
 }

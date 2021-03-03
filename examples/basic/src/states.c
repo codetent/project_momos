@@ -46,7 +46,7 @@ void states_run(void)
 
         if (true)
         {
-            current_state = STATE_SEND_TIMESTAMP; // @transition SEND -> SEND_TIMESTAMP [transmit]
+            current_state = STATE_SEND_TIMESTAMP; // @transition SEND -> SEND_TIMESTAMP [transmit#correct]
         }
         break;
 

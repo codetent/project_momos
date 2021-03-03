@@ -18,9 +18,20 @@ TRIGGER_IMPLS = {}
 class Trigger(FailureModeResolver, ABC):
     """Base trigger class. All implementations must inherit this class and specify a short name.
     """
+    variant: Optional[str] = None
+
     def __init_subclass__(cls, *, short_name: Optional[str]):
         TRIGGER_IMPLS[short_name] = cls
-        cls.id = short_name
+        cls.name = short_name
+
+    @property
+    def typ(self) -> str:
+        typ = self.name or ''
+
+        if typ and self.variant:
+            typ += '#' + self.variant
+
+        return typ
 
     @property
     def failure_modes(self) -> Dict[str, FailureMode]:

@@ -138,23 +138,55 @@ public:
 
 /* ------------------------------- Transitions ------------------------------ */
 
-#define PREPARE_NAME(a, b) __prepare_##a##_##b
-#define PREPARE_KEY(a, b) "__prepare_" #a "_" #b
-#define PREPARE_RUN(a, b, arg) ComponentRegistry::getInstance()->runComponent(PREPARE_KEY(a, b), arg, NULL)
-#define PREPARE(a, b)                                                                              \
-    class PREPARE_NAME(a, b)                                                                       \
-    {                                                                                              \
-    private:                                                                                       \
-        static ComponentInfo *info;                                                                \
-                                                                                                   \
-    public:                                                                                        \
-        static void run(void *arg, void *out);                                                     \
-    };                                                                                             \
-                                                                                                   \
-    ComponentInfo *PREPARE_NAME(a, b)::info = ComponentRegistry::getInstance()->createAndRegister( \
-        PREPARE_KEY(a, b),                                                                         \
-        PREPARE_NAME(a, b)::run);                                                                  \
-                                                                                                   \
-    void PREPARE_NAME(a, b)::run(void *arg, void *out)
+#define OVERLOAD3(_1, _2, _3, NAME, ...) NAME
+
+#define PREPARE_NAME(a, ...)                                            \
+    OVERLOAD3(__VA_ARGS__, PREPARE_NAME2, PREPARE_NAME1, PREPARE_NAME0) \
+    (a, __VA_ARGS__)
+#define PREPARE_NAME2(a, b, type, variant) __prepare_##a##_##b##_##type##_##variant
+#define PREPARE_NAME1(a, b, type) __prepare_##a##_##b##_##type
+#define PREPARE_NAME0(a, b) __prepare_##a##_##b
+
+#define PREPARE_KEY(a, ...)                                          \
+    OVERLOAD3(__VA_ARGS__, PREPARE_KEY2, PREPARE_KEY1, PREPARE_KEY0) \
+    (a, __VA_ARGS__)
+#define PREPARE_KEY2(a, b, type, variant) "__prepare_" #a "_" #b "$" #type "#" #variant
+#define PREPARE_KEY1(a, b, type) "__prepare_" #a "_" #b "$" #type
+#define PREPARE_KEY0(a, b) "__prepare_" #a "_" #b
+
+#define PREPARE_RUN(a, b, type, variant, arg) __runPreparation(PREPARE_KEY(a, b, type, variant), arg)
+
+#define PREPARE(...)                                                                                      \
+    class PREPARE_NAME(__VA_ARGS__)                                                                       \
+    {                                                                                                     \
+    private:                                                                                              \
+        static ComponentInfo *info;                                                                       \
+                                                                                                          \
+    public:                                                                                               \
+        static void run(void *arg, void *out);                                                            \
+    };                                                                                                    \
+                                                                                                          \
+    ComponentInfo *PREPARE_NAME(__VA_ARGS__)::info = ComponentRegistry::getInstance()->createAndRegister( \
+        PREPARE_KEY(__VA_ARGS__),                                                                         \
+        PREPARE_NAME(__VA_ARGS__)::run);                                                                  \
+                                                                                                          \
+    void PREPARE_NAME(__VA_ARGS__)::run(void *arg, void *out)
+
+bool __runPreparation(std::string key, void *arg)
+{
+    bool result = ComponentRegistry::getInstance()->runComponent(key, arg, NULL);
+    if (result)
+    {
+        return result;
+    }
+
+    result = ComponentRegistry::getInstance()->runComponent(key.substr(0, key.find("#")), arg, NULL);
+    if (result)
+    {
+        return result;
+    }
+
+    return ComponentRegistry::getInstance()->runComponent(key.substr(0, key.find("$")), arg, NULL);
+}
 
 #endif // __MOMOS_MACROS__
