@@ -1,7 +1,7 @@
 #include <iostream>
-#include <gtest/gtest.h>
 
-#include "momos.hpp"
+#include <gtest/gtest.h>
+#include <momos.hpp>
 
 #include "base_states.cpp"
 

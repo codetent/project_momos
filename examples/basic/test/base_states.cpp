@@ -2,14 +2,12 @@
 #include <unistd.h>
 
 #include <gmock/gmock.h>
+#include <momos.hpp>
 
-#include "momos.hpp"
 #include "mocks/hal_mock.hpp"
 
 extern "C"
 {
-#include "logic.h"
-#include "messages.h"
 #include "../src/states.c"
 }
 
