@@ -14,7 +14,11 @@ class UnboundFailureMode:
     def __init__(self, generator: Callable, requires: Callable = None, fails: bool = True) -> None:
         self.generator = generator
         self.requires = requires
-        self.fails = fails
+        self._fails = fails
+
+    @property
+    def id(self) -> str:
+        return self.generator.__name__
 
     @property
     def description(self) -> str:
@@ -25,7 +29,7 @@ class UnboundFailureMode:
     def _bind(self, instance: Any) -> FailureMode:
         """Bind failure mode to trigger instance.
         """
-        return FailureMode(generator=self.generator, requires=self.requires, fails=self.fails, instance=instance)
+        return FailureMode(generator=self.generator, requires=self.requires, fails=self._fails, instance=instance)
 
 
 class FailureMode(UnboundFailureMode):
@@ -48,6 +52,12 @@ class FailureMode(UnboundFailureMode):
         if not callable(self.requires):
             return True
         return self.requires(self.instance)
+
+    @property
+    def fails(self) -> bool:
+        if not callable(self._fails):
+            return self._fails
+        return self._fails(self.instance)
 
 
 class FailureModeResolver:

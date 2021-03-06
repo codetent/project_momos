@@ -20,12 +20,12 @@ class Trigger(FailureModeResolver, ABC):
     """
     variant: Optional[str] = None
 
-    def __init_subclass__(cls, *, short_name: Optional[str]):
+    def __init_subclass__(cls, *, short_name: str):
         TRIGGER_IMPLS[short_name] = cls
         cls.name = short_name
 
     @property
-    def typ(self) -> str:
+    def type(self) -> str:
         typ = self.name or ''
 
         if typ and self.variant:
@@ -46,7 +46,7 @@ class Trigger(FailureModeResolver, ABC):
         return []
 
     @staticmethod
-    def of(name: Optional[str] = None, **kwargs):
+    def of(name: str, **kwargs):
         """Create instance of registered impl class.
         """
         trigger_cls = TRIGGER_IMPLS[name]
@@ -54,12 +54,10 @@ class Trigger(FailureModeResolver, ABC):
 
 
 @dataclass
-class DummyTrigger(Trigger, short_name=None):
-    """Trigger type which does nothing. This is the basic trigger when no other is specified.
-    """
+class DefaultTrigger(Trigger, short_name='default'):
     @failure_mode(fails=False)
-    def ok(self) -> None:
-        """Just execute transition.
+    def ok(self) -> List[None]:
+        """Timeout matches expected value.
         """
         return [None]
 
@@ -68,22 +66,23 @@ class DummyTrigger(Trigger, short_name=None):
 class TimeoutTrigger(Trigger, short_name='timeout'):
     """Trigger type which is coupled with a specified timeout.
     """
-    min_factor = 0.1
-    max_factor = 1.9
+    min_factor: float = 0.1
+    max_factor: float = 1.9
+    exceeding: bool = True
 
     @failure_mode(fails=False)
     def ok(self) -> int:
-        """Timeout equals expected value.
+        """Timeout matches expected value.
         """
         return [1.0]
 
-    @failure_mode
+    @failure_mode(fails=lambda self: self.exceeding)
     def earlier(self) -> int:
         """Timeout less than expected.
         """
         return [self.min_factor]
 
-    @failure_mode(fails=False)
+    @failure_mode(fails=lambda self: not self.exceeding)
     def later(self) -> int:
         """Timeout greater than expected.
         """
@@ -95,11 +94,12 @@ class ReceiveTrigger(Trigger, short_name='receive'):
     """Trigger waiting for an incoming message.
     """
     count: int = 1
-    count_sensitive: bool = True
+    min_count: int = 1
+    max_count: int = 3
 
     @failure_mode(fails=False)
-    def ok(self):
-        """Expected is received.
+    def ok(self) -> List[None]:
+        """Message is received as expected.
         """
         return [None]
 
@@ -109,24 +109,17 @@ class ReceiveTrigger(Trigger, short_name='receive'):
         """
         return []
 
-    @failure_mode(requires=lambda self: self.count_sensitive)
+    @failure_mode(requires=lambda self: self.max_count > self.count)
     def more(self):
         """More messages are received than expected.
         """
-        return [None] * round(self.count * 1.5)
+        return [None] * self.max_count
 
-    @failure_mode(requires=lambda self: self.count_sensitive and self.count > 1)
+    @failure_mode(requires=lambda self: self.count > self.min_count)
     def less(self):
         """Less messages are received than expected.
         """
-        return [None] * round(self.count * 0.4)
-
-    @property
-    def problems(self) -> List[str]:
-        if self.count_sensitive:
-            return ['Count abnormalities ignored']
-
-        return []
+        return [None] * self.min_count
 
 
 @dataclass
@@ -136,8 +129,8 @@ class SendTrigger(Trigger, short_name='transmit'):
     ignore_fail: bool = False
 
     @failure_mode(fails=False)
-    def ok(self):
-        """Expected is sent.
+    def ok(self) -> List[None]:
+        """Message is sent as expected.
         """
         return [None]
 

@@ -36,10 +36,10 @@ protected:
     }
 };
 
-TEST_F(StateTest, WAIT__SEND__TimeoutEqualsExpectedValue)
+TEST_F(StateTest, WAIT__SEND__timeout__ok)
 {
 
-    // [Step 1]: WAIT: Timeout equals expected value. ----------
+    // [Step 1]: WAIT: Timeout matches expected value. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
 
     auto arg_1_1 = 1.0;
@@ -53,24 +53,7 @@ TEST_F(StateTest, WAIT__SEND__TimeoutEqualsExpectedValue)
 
 }
 
-TEST_F(StateTest, WAIT__SEND__TimeoutLessThanExpected)
-{
-
-    // [Step 1]: WAIT: Timeout less than expected. ----------
-    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
-
-    auto arg_1_1 = 0.1;
-    if (!PREPARE_RUN(WAIT, SEND, timeout, None, &arg_1_1))
-    {
-        WARN("Transition preparation undefined for WAIT -> SEND");
-    }
-    HOOK_RUN(progress);
-
-    ASSERT_NE(STATE_VAR_GET(), STATE_GET(SEND));
-
-}
-
-TEST_F(StateTest, WAIT__SEND__TimeoutGreaterThanExpected)
+TEST_F(StateTest, WAIT__SEND__timeout__later)
 {
 
     // [Step 1]: WAIT: Timeout greater than expected. ----------
@@ -87,10 +70,27 @@ TEST_F(StateTest, WAIT__SEND__TimeoutGreaterThanExpected)
 
 }
 
-TEST_F(StateTest, SEND__SEND_TIMESTAMP__ExpectedIsSent)
+TEST_F(StateTest, WAIT__SEND__timeout__earlier)
 {
 
-    // [Step 1]: WAIT: Timeout equals expected value. ----------
+    // [Step 1]: WAIT: Timeout less than expected. ----------
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
+
+    auto arg_1_1 = 0.1;
+    if (!PREPARE_RUN(WAIT, SEND, timeout, None, &arg_1_1))
+    {
+        WARN("Transition preparation undefined for WAIT -> SEND");
+    }
+    HOOK_RUN(progress);
+
+    ASSERT_NE(STATE_VAR_GET(), STATE_GET(SEND));
+
+}
+
+TEST_F(StateTest, SEND__SEND_TIMESTAMP__transmit__ok)
+{
+
+    // [Step 1]: WAIT: Timeout matches expected value. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
 
     auto arg_1_1 = 1.0;
@@ -103,11 +103,11 @@ TEST_F(StateTest, SEND__SEND_TIMESTAMP__ExpectedIsSent)
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
 
 
-    // [Step 2]: SEND: Expected is sent. ----------
+    // [Step 2]: SEND: Message is sent as expected. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
 
     auto arg_2_1 = 0;
-    if (!PREPARE_RUN(SEND, SEND_TIMESTAMP, transmit, correct, &arg_2_1))
+    if (!PREPARE_RUN(SEND, SEND_TIMESTAMP, transmit, None, &arg_2_1))
     {
         WARN("Transition preparation undefined for SEND -> SEND_TIMESTAMP");
     }
@@ -117,10 +117,10 @@ TEST_F(StateTest, SEND__SEND_TIMESTAMP__ExpectedIsSent)
 
 }
 
-TEST_F(StateTest, SEND_TIMESTAMP__RECEIVE__JustExecuteTransition)
+TEST_F(StateTest, RECEIVE__WAIT__timeout__ok)
 {
 
-    // [Step 1]: WAIT: Timeout equals expected value. ----------
+    // [Step 1]: WAIT: Timeout matches expected value. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
 
     auto arg_1_1 = 1.0;
@@ -133,11 +133,11 @@ TEST_F(StateTest, SEND_TIMESTAMP__RECEIVE__JustExecuteTransition)
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
 
 
-    // [Step 2]: SEND: Expected is sent. ----------
+    // [Step 2]: SEND: Message is sent as expected. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
 
     auto arg_2_1 = 0;
-    if (!PREPARE_RUN(SEND, SEND_TIMESTAMP, transmit, correct, &arg_2_1))
+    if (!PREPARE_RUN(SEND, SEND_TIMESTAMP, transmit, None, &arg_2_1))
     {
         WARN("Transition preparation undefined for SEND -> SEND_TIMESTAMP");
     }
@@ -146,24 +146,37 @@ TEST_F(StateTest, SEND_TIMESTAMP__RECEIVE__JustExecuteTransition)
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND_TIMESTAMP));
 
 
-    // [Step 3]: SEND_TIMESTAMP: Just execute transition. ----------
+    // [Step 3]: SEND_TIMESTAMP: Timeout matches expected value. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND_TIMESTAMP));
 
     auto arg_3_1 = 0;
-    if (!PREPARE_RUN(SEND_TIMESTAMP, RECEIVE, None, None, &arg_3_1))
+    if (!PREPARE_RUN(SEND_TIMESTAMP, RECEIVE, default, None, &arg_3_1))
     {
         WARN("Transition preparation undefined for SEND_TIMESTAMP -> RECEIVE");
     }
     HOOK_RUN(progress);
 
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(RECEIVE));
+
+
+    // [Step 4]: RECEIVE: Timeout matches expected value. ----------
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(RECEIVE));
+
+    auto arg_4_1 = 1.0;
+    if (!PREPARE_RUN(RECEIVE, WAIT, timeout, None, &arg_4_1))
+    {
+        WARN("Transition preparation undefined for RECEIVE -> WAIT");
+    }
+    HOOK_RUN(progress);
+
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
 
 }
 
-TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__ExpectedIsReceived)
+TEST_F(StateTest, RECEIVE__WAIT__receive__incorrect__ok)
 {
 
-    // [Step 1]: WAIT: Timeout equals expected value. ----------
+    // [Step 1]: WAIT: Timeout matches expected value. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
 
     auto arg_1_1 = 1.0;
@@ -176,11 +189,11 @@ TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__ExpectedIsReceived)
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
 
 
-    // [Step 2]: SEND: Expected is sent. ----------
+    // [Step 2]: SEND: Message is sent as expected. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
 
     auto arg_2_1 = 0;
-    if (!PREPARE_RUN(SEND, SEND_TIMESTAMP, transmit, correct, &arg_2_1))
+    if (!PREPARE_RUN(SEND, SEND_TIMESTAMP, transmit, None, &arg_2_1))
     {
         WARN("Transition preparation undefined for SEND -> SEND_TIMESTAMP");
     }
@@ -189,11 +202,11 @@ TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__ExpectedIsReceived)
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND_TIMESTAMP));
 
 
-    // [Step 3]: SEND_TIMESTAMP: Just execute transition. ----------
+    // [Step 3]: SEND_TIMESTAMP: Timeout matches expected value. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND_TIMESTAMP));
 
     auto arg_3_1 = 0;
-    if (!PREPARE_RUN(SEND_TIMESTAMP, RECEIVE, None, None, &arg_3_1))
+    if (!PREPARE_RUN(SEND_TIMESTAMP, RECEIVE, default, None, &arg_3_1))
     {
         WARN("Transition preparation undefined for SEND_TIMESTAMP -> RECEIVE");
     }
@@ -202,11 +215,67 @@ TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__ExpectedIsReceived)
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(RECEIVE));
 
 
-    // [Step 4]: RECEIVE: Expected is received. ----------
+    // [Step 4]: RECEIVE: Message is received as expected. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(RECEIVE));
 
     auto arg_4_1 = 0;
-    if (!PREPARE_RUN(RECEIVE, RECEIVE_TIMESTAMP, receive, None, &arg_4_1))
+    if (!PREPARE_RUN(RECEIVE, WAIT, receive, incorrect, &arg_4_1))
+    {
+        WARN("Transition preparation undefined for RECEIVE -> WAIT");
+    }
+    HOOK_RUN(progress);
+
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
+
+}
+
+TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__receive__correct__ok)
+{
+
+    // [Step 1]: WAIT: Timeout matches expected value. ----------
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
+
+    auto arg_1_1 = 1.0;
+    if (!PREPARE_RUN(WAIT, SEND, timeout, None, &arg_1_1))
+    {
+        WARN("Transition preparation undefined for WAIT -> SEND");
+    }
+    HOOK_RUN(progress);
+
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
+
+
+    // [Step 2]: SEND: Message is sent as expected. ----------
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
+
+    auto arg_2_1 = 0;
+    if (!PREPARE_RUN(SEND, SEND_TIMESTAMP, transmit, None, &arg_2_1))
+    {
+        WARN("Transition preparation undefined for SEND -> SEND_TIMESTAMP");
+    }
+    HOOK_RUN(progress);
+
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND_TIMESTAMP));
+
+
+    // [Step 3]: SEND_TIMESTAMP: Timeout matches expected value. ----------
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND_TIMESTAMP));
+
+    auto arg_3_1 = 0;
+    if (!PREPARE_RUN(SEND_TIMESTAMP, RECEIVE, default, None, &arg_3_1))
+    {
+        WARN("Transition preparation undefined for SEND_TIMESTAMP -> RECEIVE");
+    }
+    HOOK_RUN(progress);
+
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(RECEIVE));
+
+
+    // [Step 4]: RECEIVE: Message is received as expected. ----------
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(RECEIVE));
+
+    auto arg_4_1 = 0;
+    if (!PREPARE_RUN(RECEIVE, RECEIVE_TIMESTAMP, receive, correct, &arg_4_1))
     {
         WARN("Transition preparation undefined for RECEIVE -> RECEIVE_TIMESTAMP");
     }
@@ -216,10 +285,10 @@ TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__ExpectedIsReceived)
 
 }
 
-TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__NoMessageIsReceived)
+TEST_F(StateTest, RECEIVE__WAIT__timeout__later)
 {
 
-    // [Step 1]: WAIT: Timeout equals expected value. ----------
+    // [Step 1]: WAIT: Timeout matches expected value. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
 
     auto arg_1_1 = 1.0;
@@ -232,11 +301,11 @@ TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__NoMessageIsReceived)
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
 
 
-    // [Step 2]: SEND: Expected is sent. ----------
+    // [Step 2]: SEND: Message is sent as expected. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
 
     auto arg_2_1 = 0;
-    if (!PREPARE_RUN(SEND, SEND_TIMESTAMP, transmit, correct, &arg_2_1))
+    if (!PREPARE_RUN(SEND, SEND_TIMESTAMP, transmit, None, &arg_2_1))
     {
         WARN("Transition preparation undefined for SEND -> SEND_TIMESTAMP");
     }
@@ -245,11 +314,67 @@ TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__NoMessageIsReceived)
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND_TIMESTAMP));
 
 
-    // [Step 3]: SEND_TIMESTAMP: Just execute transition. ----------
+    // [Step 3]: SEND_TIMESTAMP: Timeout matches expected value. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND_TIMESTAMP));
 
     auto arg_3_1 = 0;
-    if (!PREPARE_RUN(SEND_TIMESTAMP, RECEIVE, None, None, &arg_3_1))
+    if (!PREPARE_RUN(SEND_TIMESTAMP, RECEIVE, default, None, &arg_3_1))
+    {
+        WARN("Transition preparation undefined for SEND_TIMESTAMP -> RECEIVE");
+    }
+    HOOK_RUN(progress);
+
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(RECEIVE));
+
+
+    // [Step 4]: RECEIVE: Timeout greater than expected. ----------
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(RECEIVE));
+
+    auto arg_4_1 = 1.9;
+    if (!PREPARE_RUN(RECEIVE, WAIT, timeout, None, &arg_4_1))
+    {
+        WARN("Transition preparation undefined for RECEIVE -> WAIT");
+    }
+    HOOK_RUN(progress);
+
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
+
+}
+
+TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__receive__correct__no)
+{
+
+    // [Step 1]: WAIT: Timeout matches expected value. ----------
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
+
+    auto arg_1_1 = 1.0;
+    if (!PREPARE_RUN(WAIT, SEND, timeout, None, &arg_1_1))
+    {
+        WARN("Transition preparation undefined for WAIT -> SEND");
+    }
+    HOOK_RUN(progress);
+
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
+
+
+    // [Step 2]: SEND: Message is sent as expected. ----------
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
+
+    auto arg_2_1 = 0;
+    if (!PREPARE_RUN(SEND, SEND_TIMESTAMP, transmit, None, &arg_2_1))
+    {
+        WARN("Transition preparation undefined for SEND -> SEND_TIMESTAMP");
+    }
+    HOOK_RUN(progress);
+
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND_TIMESTAMP));
+
+
+    // [Step 3]: SEND_TIMESTAMP: Timeout matches expected value. ----------
+    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND_TIMESTAMP));
+
+    auto arg_3_1 = 0;
+    if (!PREPARE_RUN(SEND_TIMESTAMP, RECEIVE, default, None, &arg_3_1))
     {
         WARN("Transition preparation undefined for SEND_TIMESTAMP -> RECEIVE");
     }
@@ -266,10 +391,10 @@ TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__NoMessageIsReceived)
 
 }
 
-TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__MoreMessagesAreReceivedThanExpected)
+TEST_F(StateTest, RECEIVE__WAIT__receive__incorrect__no)
 {
 
-    // [Step 1]: WAIT: Timeout equals expected value. ----------
+    // [Step 1]: WAIT: Timeout matches expected value. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
 
     auto arg_1_1 = 1.0;
@@ -282,11 +407,11 @@ TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__MoreMessagesAreReceivedThanExpecte
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
 
 
-    // [Step 2]: SEND: Expected is sent. ----------
+    // [Step 2]: SEND: Message is sent as expected. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
 
     auto arg_2_1 = 0;
-    if (!PREPARE_RUN(SEND, SEND_TIMESTAMP, transmit, correct, &arg_2_1))
+    if (!PREPARE_RUN(SEND, SEND_TIMESTAMP, transmit, None, &arg_2_1))
     {
         WARN("Transition preparation undefined for SEND -> SEND_TIMESTAMP");
     }
@@ -295,11 +420,11 @@ TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__MoreMessagesAreReceivedThanExpecte
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND_TIMESTAMP));
 
 
-    // [Step 3]: SEND_TIMESTAMP: Just execute transition. ----------
+    // [Step 3]: SEND_TIMESTAMP: Timeout matches expected value. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND_TIMESTAMP));
 
     auto arg_3_1 = 0;
-    if (!PREPARE_RUN(SEND_TIMESTAMP, RECEIVE, None, None, &arg_3_1))
+    if (!PREPARE_RUN(SEND_TIMESTAMP, RECEIVE, default, None, &arg_3_1))
     {
         WARN("Transition preparation undefined for SEND_TIMESTAMP -> RECEIVE");
     }
@@ -308,30 +433,18 @@ TEST_F(StateTest, RECEIVE__RECEIVE_TIMESTAMP__MoreMessagesAreReceivedThanExpecte
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(RECEIVE));
 
 
-    // [Step 4]: RECEIVE: More messages are received than expected. ----------
+    // [Step 4]: RECEIVE: No message is received. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(RECEIVE));
 
-    auto arg_4_1 = 0;
-    if (!PREPARE_RUN(RECEIVE, RECEIVE_TIMESTAMP, receive, None, &arg_4_1))
-    {
-        WARN("Transition preparation undefined for RECEIVE -> RECEIVE_TIMESTAMP");
-    }
-    HOOK_RUN(progress);
-    auto arg_4_2 = 0;
-    if (!PREPARE_RUN(RECEIVE, RECEIVE_TIMESTAMP, receive, None, &arg_4_2))
-    {
-        WARN("Transition preparation undefined for RECEIVE -> RECEIVE_TIMESTAMP");
-    }
-    HOOK_RUN(progress);
 
-    ASSERT_NE(STATE_VAR_GET(), STATE_GET(RECEIVE_TIMESTAMP));
+    ASSERT_NE(STATE_VAR_GET(), STATE_GET(WAIT));
 
 }
 
-TEST_F(StateTest, RECEIVE_TIMESTAMP__WAIT__JustExecuteTransition)
+TEST_F(StateTest, RECEIVE__WAIT__timeout__earlier)
 {
 
-    // [Step 1]: WAIT: Timeout equals expected value. ----------
+    // [Step 1]: WAIT: Timeout matches expected value. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
 
     auto arg_1_1 = 1.0;
@@ -344,11 +457,11 @@ TEST_F(StateTest, RECEIVE_TIMESTAMP__WAIT__JustExecuteTransition)
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
 
 
-    // [Step 2]: SEND: Expected is sent. ----------
+    // [Step 2]: SEND: Message is sent as expected. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND));
 
     auto arg_2_1 = 0;
-    if (!PREPARE_RUN(SEND, SEND_TIMESTAMP, transmit, correct, &arg_2_1))
+    if (!PREPARE_RUN(SEND, SEND_TIMESTAMP, transmit, None, &arg_2_1))
     {
         WARN("Transition preparation undefined for SEND -> SEND_TIMESTAMP");
     }
@@ -357,11 +470,11 @@ TEST_F(StateTest, RECEIVE_TIMESTAMP__WAIT__JustExecuteTransition)
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND_TIMESTAMP));
 
 
-    // [Step 3]: SEND_TIMESTAMP: Just execute transition. ----------
+    // [Step 3]: SEND_TIMESTAMP: Timeout matches expected value. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(SEND_TIMESTAMP));
 
     auto arg_3_1 = 0;
-    if (!PREPARE_RUN(SEND_TIMESTAMP, RECEIVE, None, None, &arg_3_1))
+    if (!PREPARE_RUN(SEND_TIMESTAMP, RECEIVE, default, None, &arg_3_1))
     {
         WARN("Transition preparation undefined for SEND_TIMESTAMP -> RECEIVE");
     }
@@ -370,30 +483,17 @@ TEST_F(StateTest, RECEIVE_TIMESTAMP__WAIT__JustExecuteTransition)
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(RECEIVE));
 
 
-    // [Step 4]: RECEIVE: Expected is received. ----------
+    // [Step 4]: RECEIVE: Timeout less than expected. ----------
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET(RECEIVE));
 
-    auto arg_4_1 = 0;
-    if (!PREPARE_RUN(RECEIVE, RECEIVE_TIMESTAMP, receive, None, &arg_4_1))
+    auto arg_4_1 = 0.1;
+    if (!PREPARE_RUN(RECEIVE, WAIT, timeout, None, &arg_4_1))
     {
-        WARN("Transition preparation undefined for RECEIVE -> RECEIVE_TIMESTAMP");
+        WARN("Transition preparation undefined for RECEIVE -> WAIT");
     }
     HOOK_RUN(progress);
 
-    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(RECEIVE_TIMESTAMP));
-
-
-    // [Step 5]: RECEIVE_TIMESTAMP: Just execute transition. ----------
-    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(RECEIVE_TIMESTAMP));
-
-    auto arg_5_1 = 0;
-    if (!PREPARE_RUN(RECEIVE_TIMESTAMP, WAIT, None, None, &arg_5_1))
-    {
-        WARN("Transition preparation undefined for RECEIVE_TIMESTAMP -> WAIT");
-    }
-    HOOK_RUN(progress);
-
-    ASSERT_EQ(STATE_VAR_GET(), STATE_GET(WAIT));
+    ASSERT_NE(STATE_VAR_GET(), STATE_GET(WAIT));
 
 }
 

@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import networkx as nx
-from networkx.algorithms import all_simple_paths
+from networkx.algorithms import all_simple_edge_paths
 from networkx.drawing.nx_pydot import write_dot
 from networkx.utils import pairwise
 
@@ -65,14 +65,14 @@ class StateGraph:
         """
         end_nodes = [n for n in self.graph.nodes() if self.graph.out_degree(n) == 0 and self.graph.in_degree(n) > 0]
         end_nodes += self.graph.predecessors(self.initial_state)
-        paths = []
+        paths = list()
 
-        for node in end_nodes:
-            for path in all_simple_paths(self.graph, self.initial_state, node):
-                if self.graph.out_degree(node) > 0:
-                    path.append(self.initial_state)
+        for end_node in end_nodes:
+            for path in all_simple_edge_paths(self.graph, self.initial_state, end_node):
+                # add transition back to initial
+                path.append((end_node, self.initial_state))
 
-                paths.append(tuple(self.get_transition(*p) for p in pairwise(path)))
+                paths.append(tuple(self.get_transition(*e) for e in path))
 
         return tuple(paths)
 
@@ -98,7 +98,7 @@ class StateGraph:
         self.graph.add_edge(
             IdStrProxy(transition.from_state),
             IdStrProxy(transition.to_state),
-            label=transition.trigger.typ,
+            label='|'.join([t.type for t in transition.triggers]),
         )
 
     def get_transition(self, from_state: State, to_state: State) -> Transition:
@@ -108,7 +108,7 @@ class StateGraph:
             if transition.from_state == from_state and transition.to_state == to_state:
                 return transition
 
-        raise ValueError('Transition not found')
+        raise ValueError('No transition found')
 
     def save(self, path: Path) -> None:
         """Save graph to dot file.
@@ -125,6 +125,11 @@ class StateGraph:
             if isinstance(item, State):
                 graph.add_state(item)
             elif isinstance(item, Transition):
-                graph.add_transition(item)
+                try:
+                    transition = graph.get_transition(item.from_state, item.to_state)
+                except ValueError:
+                    graph.add_transition(item)
+                else:
+                    transition.triggers += item.triggers
 
         return graph

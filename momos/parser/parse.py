@@ -32,14 +32,19 @@ class GrammarTransformer(Transformer):
             from_state, to_state, trigger = items
         except ValueError:
             from_state, to_state = items
-            trigger = Trigger.of()
+            trigger = None
 
         if not from_state:
             return
 
         from_state = Resolvable.lazy(State, from_state)
         to_state = Resolvable.lazy(State, to_state)
-        return Transition(from_state=from_state, to_state=to_state, trigger=trigger)
+        transition = Transition(from_state=from_state, to_state=to_state)
+
+        if trigger:
+            transition.triggers.append(trigger)
+
+        return transition
 
     def trigger(self, items) -> Trigger:
         if len(items) > 1 and isinstance(items[1], str):

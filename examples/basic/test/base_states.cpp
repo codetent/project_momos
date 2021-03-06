@@ -41,15 +41,25 @@ HOOK(progress)
 
 PREPARE(WAIT, SEND)
 {
-    sleep(2.0 * FLOAT_ARG);
+    sleep(2 * FLOAT_ARG);
 }
 
-PREPARE(RECEIVE, RECEIVE_TIMESTAMP, receive)
-{
-    states_update();
-}
-
-PREPARE(SEND, SEND_TIMESTAMP, transmit, correct)
+PREPARE(SEND, SEND_TIMESTAMP)
 {
     EXPECT_CALL(hal_mock_obj, transmit(42)).Times(1);
+}
+
+PREPARE(RECEIVE, RECEIVE_TIMESTAMP)
+{
+    states_update(42);
+}
+
+PREPARE(RECEIVE, WAIT, receive)
+{
+    states_update(0);
+}
+
+PREPARE(RECEIVE, WAIT, timeout)
+{
+    sleep(3 * FLOAT_ARG);
 }

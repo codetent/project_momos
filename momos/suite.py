@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, List
+from typing import Any, List, Optional
 
 from .components import Transition
 from .components.mode import FailureMode
+from .components.trigger import Trigger
 from .graph import StateGraph
 
 
@@ -13,7 +14,25 @@ class TestStep:
     """Step of a test case failing with the failure mode set.
     """
     transition: Transition
+    trigger: Trigger
     mode: FailureMode
+
+    @property
+    def id(self) -> str:
+        parts = [
+            self.transition.from_state.id,
+            self.transition.to_state.id,
+            self.trigger.name,
+        ]
+
+        if self.trigger.variant:
+            parts.append(self.trigger.variant)
+
+        return '__'.join(parts + [self.mode.id])
+
+    @property
+    def fails(self) -> bool:
+        return self.mode.fails
 
     @property
     def description(self) -> str:
@@ -32,8 +51,18 @@ class TestStep:
 class TestCase:
     """Test case consisting out of several test steps.
     """
-    mode: FailureMode
     steps: List[TestStep]
+
+    @property
+    def id(self):
+        return self.steps[-1].id
+
+    @property
+    def priority(self):
+        return len(self.steps)
+
+    def __hash__(self):
+        return hash(self.id)
 
 
 @dataclass
@@ -46,15 +75,24 @@ class TestSuite:
     def of(cls, graph: StateGraph) -> TestSuite:
         """Create new test suite out of given state graph.
         """
-        cases = []
+        cases = set()
 
         for transitions in graph.simple_paths:
-            working_steps = [TestStep(transition, transition.trigger.ok) for transition in transitions]
+            working_steps = [
+                TestStep(transition, trigger=transition.default_trigger, mode=transition.default_trigger.ok)
+                for transition in transitions
+            ]
 
             for i, transition in enumerate(transitions):
-                for mode in transition.trigger.failure_modes.values():
-                    steps = working_steps[:i] + [TestStep(transition, mode)]
-                    case = TestCase(mode=mode, steps=steps)
-                    cases.append(case)
+                for trigger in transition.triggers:
+                    for mode in trigger.failure_modes.values():
+                        steps = working_steps[:i] + [TestStep(transition, trigger=trigger, mode=mode)]
+                        case = TestCase(steps=steps)
+                        cases.add(case)
+
+        cases = sorted(cases, key=lambda o: o.priority)
+
+        for case in cases:
+            print(case.id)
 
         return cls(cases)

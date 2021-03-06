@@ -15,7 +15,6 @@ include_directories("${PROJECT_SOURCE_DIR}/inc")
 add_executable(testy src/main.c
                      src/messages.c
                      src/states.c
-                     src/logic.c
                      src/hal.c)
 
 ##
@@ -42,8 +41,7 @@ message("Momos include path: ${MOMOS_INCLUDE}")
 
 add_executable(tests test/test_states.cpp
                      test/mocks/hal_mock.cpp
-                     src/messages.c
-                     src/logic.c)
+                     src/messages.c)
 target_include_directories(tests PRIVATE "${MOMOS_INCLUDE}"
                                          test)
 target_link_libraries(tests gmock

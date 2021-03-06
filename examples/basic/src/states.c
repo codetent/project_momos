@@ -17,17 +17,20 @@
 static uint8_t current_state;
 static time_t next_time;
 static bool received;
+static int received_msg;
 
 void states_init(void)
 {
     next_time = time(0) + 2U;
     current_state = STATE_WAIT; // @transition . -> WAIT
     received = false;
+    received_msg = 0U;
 }
 
-void states_update(void)
+void states_update(int msg)
 {
     received = true;
+    received_msg = msg;
 }
 
 void states_run(void)
@@ -43,26 +46,32 @@ void states_run(void)
 
     case STATE_SEND:
         send_message(42);
-
-        if (true)
-        {
-            current_state = STATE_SEND_TIMESTAMP; // @transition SEND -> SEND_TIMESTAMP [transmit#correct]
-        }
+        current_state = STATE_SEND_TIMESTAMP; // @transition SEND -> SEND_TIMESTAMP [transmit]
         break;
 
     case STATE_SEND_TIMESTAMP:
-        // get send timestamp
-        if (true)
-        {
-            current_state = STATE_RECEIVE; // @transition SEND_TIMESTAMP -> RECEIVE
-        }
+        current_state = STATE_RECEIVE; // @transition SEND_TIMESTAMP -> RECEIVE
+        next_time = time(0) + 2U;
         break;
 
     case STATE_RECEIVE:
         if (received)
         {
             received = false;
-            current_state = STATE_RECEIVE_TIMESTAMP; // @transition RECEIVE -> RECEIVE_TIMESTAMP [receive]
+
+            if (received_msg == 42)
+            {
+                current_state = STATE_RECEIVE_TIMESTAMP; // @transition RECEIVE -> RECEIVE_TIMESTAMP [receive#correct, max_count=1]
+            }
+            else
+            {
+                current_state = STATE_WAIT; // @transition RECEIVE -> WAIT [receive#incorrect, max_count=1]
+            }
+        }
+        else if (time(0) > next_time)
+        {
+            next_time = time(0) + 2U;
+            current_state = STATE_WAIT; // @transition RECEIVE -> WAIT [timeout]
         }
         break;
 
