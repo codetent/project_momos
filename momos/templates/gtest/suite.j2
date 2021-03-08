@@ -8,7 +8,8 @@
 {% endfor %}
 
 
-#define WARN(x) std::cerr << "[     WARN ] " << x << std::endl
+#define LOG(x)  std::cout << "[ #        ] " << x << std::endl 
+#define WARN(x) std::cerr << "[ !        ] " << x << std::endl
 
 
 class StateEnv : public ::testing::Environment
@@ -41,12 +42,18 @@ protected:
 {% for case in suite.cases %}
 TEST_F(StateTest, {{ case.id }})
 {
+    LOG("Description: {{ case.description }}");
+
     {% for step in case.steps %}
     {% set from_state = step.transition.from_state %}
     {% set to_state = step.transition.to_state %}
+    {% set trigger = step.trigger %}
+    {% set mode = step.mode %}
     {% set step_index = loop.index %}
 
     // [Step {{ step_index }}]: {{ step.description }} ----------
+    LOG("{{ from_state.id }} -> {{ to_state.id }} [{{ trigger.type }}]");
+
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET({{ from_state.id }}));
 
     {% for arg in step.arguments %}

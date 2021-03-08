@@ -76,30 +76,12 @@ public:
 
 /* ---------------------------------- State --------------------------------- */
 
-#define STATE_NAME(x) __state_##x
-#define STATE_KEY(x) "__state_" #x
-#define STATE_GET(x) STATE_NAME(x)::get()
-#define STATE(x, v)                                                                           \
-    class STATE_NAME(x)                                                                       \
-    {                                                                                         \
-    private:                                                                                  \
-        static ComponentInfo *info;                                                           \
-                                                                                              \
-    public:                                                                                   \
-        static auto get(void)                                                                 \
-        {                                                                                     \
-            return v;                                                                         \
-        }                                                                                     \
-                                                                                              \
-        static void run(void *arg, void *out) {}                                              \
-    };                                                                                        \
-                                                                                              \
-    ComponentInfo *STATE_NAME(x)::info = ComponentRegistry::getInstance()->createAndRegister( \
-        STATE_KEY(x),                                                                         \
-        STATE_NAME(x)::run)
+#define STATE(name, value) const auto name = value
+#define STATE_GET(name) name
 
-#define STATE_VAR_GET() STATE_GET(__current)
-#define STATE_VAR(v) STATE(__current, v)
+#define STATE_VAR(value) \
+    auto __CURRENT__(void) { return value; }
+#define STATE_VAR_GET() __CURRENT__()
 
 /* ---------------------------------- Hooks --------------------------------- */
 

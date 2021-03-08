@@ -55,11 +55,19 @@ class TestCase:
 
     @property
     def id(self):
-        return self.steps[-1].id
+        return self.last_step.id
 
     @property
     def priority(self):
         return len(self.steps)
+
+    @property
+    def fails(self) -> bool:
+        return self.last_step.fails
+
+    @property
+    def last_step(self):
+        return self.steps[-1]
 
     def __hash__(self):
         return hash(self.id)
