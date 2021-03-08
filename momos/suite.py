@@ -58,6 +58,10 @@ class TestCase:
         return self.last_step.id
 
     @property
+    def description(self):
+        return self.last_step.description
+
+    @property
     def priority(self):
         return len(self.steps)
 
@@ -69,8 +73,11 @@ class TestCase:
     def last_step(self):
         return self.steps[-1]
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.id)
+
+    def __eq__(self, other):
+        return self.id == other.id
 
 
 @dataclass
@@ -92,6 +99,9 @@ class TestSuite:
             ]
 
             for i, transition in enumerate(transitions):
+                case = TestCase(steps=working_steps[:(i + 1)])
+                cases.add(case)
+
                 for trigger in transition.triggers:
                     for mode in trigger.failure_modes.values():
                         steps = working_steps[:i] + [TestStep(transition, trigger=trigger, mode=mode)]
