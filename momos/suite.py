@@ -92,7 +92,7 @@ class TestSuite:
         """
         cases = set()
 
-        for transitions in graph.simple_paths:
+        for transitions in graph.simple_edge_paths:
             working_steps = [
                 TestStep(transition, trigger=transition.default_trigger, mode=transition.default_trigger.ok)
                 for transition in transitions

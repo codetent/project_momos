@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import networkx as nx
-from networkx.algorithms import all_simple_edge_paths
+from networkx.algorithms import shortest_path
 from networkx.drawing.nx_pydot import write_dot
 from networkx.utils import pairwise
 
@@ -60,19 +60,18 @@ class StateGraph:
         return len(list(self.graph.predecessors(self.initial_state))) > 0
 
     @property
-    def simple_paths(self) -> Tuple[Tuple[Transition]]:
+    def simple_edge_paths(self) -> Tuple[Tuple[Transition]]:
         """Get all paths without loops that are ending with an isolated state or with the initial node.
         """
-        end_nodes = [n for n in self.graph.nodes() if self.graph.out_degree(n) == 0 and self.graph.in_degree(n) > 0]
-        end_nodes += self.graph.predecessors(self.initial_state)
         paths = list()
 
-        for end_node in end_nodes:
-            for path in all_simple_edge_paths(self.graph, self.initial_state, end_node):
-                # add transition back to initial
-                path.append((end_node, self.initial_state))
-
-                paths.append(tuple(self.get_transition(*e) for e in path))
+        for transition in self.transitions:
+            path = [
+                self.get_transition(*p)
+                for p in pairwise(shortest_path(self.graph, self.initial_state, transition.from_state))
+            ]
+            path.append(transition)
+            paths.append(transition)
 
         return tuple(paths)
 
