@@ -71,7 +71,7 @@ class StateGraph:
                 for p in pairwise(shortest_path(self.graph, self.initial_state, transition.from_state))
             ]
             path.append(transition)
-            paths.append(transition)
+            paths.append(path)
 
         return tuple(paths)
 
