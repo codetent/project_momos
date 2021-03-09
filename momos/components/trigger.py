@@ -68,21 +68,24 @@ class TimeoutTrigger(Trigger, short_name='timeout'):
     """
     min_factor: float = 0.1
     max_factor: float = 1.9
-    exceeding: bool = True
+    operator: str = '>'
 
     @failure_mode(fails=False)
     def ok(self) -> int:
         """Timeout matches expected value.
         """
-        return [1.0]
+        if not self.earlier.fails:
+            return self.earlier.arguments
+        else:
+            return self.later.arguments
 
-    @failure_mode(fails=lambda self: self.exceeding)
+    @failure_mode(fails=lambda self: '>' in self.operator)
     def earlier(self) -> int:
         """Timeout less than expected.
         """
         return [self.min_factor]
 
-    @failure_mode(fails=lambda self: not self.exceeding)
+    @failure_mode(fails=lambda self: '<' in self.operator)
     def later(self) -> int:
         """Timeout greater than expected.
         """
@@ -118,7 +121,6 @@ class ReceiveTrigger(Trigger, short_name='receive'):
 class SendTrigger(Trigger, short_name='send'):
     """Trigger waiting for a successful sent message.
     """
-    max_count: int = 3
     check: bool = False
 
     @failure_mode(fails=False)
@@ -132,9 +134,3 @@ class SendTrigger(Trigger, short_name='send'):
         """No message is sent.
         """
         return []
-
-    @failure_mode(requires=lambda self: self.max_count > 1)
-    def more(self):
-        """More messages are received than expected.
-        """
-        return list(range(1, self.max_count + 1))
