@@ -37,7 +37,7 @@ class StateGraph:
         """Get initial state of the graph.
         """
         try:
-            return next(filter(attrgetter('initial'), self.states))
+            return IdStrProxy(next(filter(attrgetter('initial'), self.states)))
         except StopIteration:
             return None
 

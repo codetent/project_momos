@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from logging import INFO, basicConfig
 from pathlib import Path
 
 import click
@@ -68,9 +69,6 @@ def analyze(input_file: str) -> None:
         for transition in graph.transitions:
             click.echo(f'{INDENT}{transition.from_state.id} -> {transition.to_state.id}')
 
-            for problem in transition.trigger.problems:
-                click.echo(f'{INDENT}{INDENT}{problem}')
-
     def check_metrics():
         click.echo(f'Closed graph: {YES if graph.is_closed else NO}')
         click.echo()
@@ -132,6 +130,11 @@ def build(input_file: str, base_file: str, output_file: str, flavor: str) -> Non
 def run() -> None:
     """Main entry for cli.
     """
+    basicConfig(
+        level=INFO,
+        format='%(message)s',
+    )
+
     main.add_command(include)
     main.add_command(build)
     main.add_command(analyze)

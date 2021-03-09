@@ -46,7 +46,7 @@ void states_run(void)
 
     case STATE_SEND:
         send_message(42);
-        current_state = STATE_SEND_TIMESTAMP; // @transition SEND -> SEND_TIMESTAMP [transmit]
+        current_state = STATE_SEND_TIMESTAMP; // @transition SEND -> SEND_TIMESTAMP [send]
         break;
 
     case STATE_SEND_TIMESTAMP:

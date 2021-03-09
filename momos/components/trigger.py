@@ -39,12 +39,6 @@ class Trigger(FailureModeResolver, ABC):
         """
         return {k: m for k, m in self._failure_modes.items() if m.possible}
 
-    @property
-    def problems(self) -> List[str]:
-        """Get list of problems that can occur.
-        """
-        return []
-
     @staticmethod
     def of(name: str, **kwargs):
         """Create instance of registered impl class.
@@ -57,9 +51,15 @@ class Trigger(FailureModeResolver, ABC):
 class DefaultTrigger(Trigger, short_name='default'):
     @failure_mode(fails=False)
     def ok(self) -> List[None]:
-        """Timeout matches expected value.
+        """Transition is triggered.
         """
         return [None]
+
+    @failure_mode
+    def no(self):
+        """Transition is not triggered.
+        """
+        return []
 
 
 @dataclass
@@ -93,8 +93,6 @@ class TimeoutTrigger(Trigger, short_name='timeout'):
 class ReceiveTrigger(Trigger, short_name='receive'):
     """Trigger waiting for an incoming message.
     """
-    count: int = 1
-    min_count: int = 1
     max_count: int = 3
 
     @failure_mode(fails=False)
@@ -109,24 +107,19 @@ class ReceiveTrigger(Trigger, short_name='receive'):
         """
         return []
 
-    @failure_mode(requires=lambda self: self.max_count > self.count)
+    @failure_mode(requires=lambda self: self.max_count > 1)
     def more(self):
         """More messages are received than expected.
         """
         return [None] * self.max_count
 
-    @failure_mode(requires=lambda self: self.count > self.min_count)
-    def less(self):
-        """Less messages are received than expected.
-        """
-        return [None] * self.min_count
-
 
 @dataclass
-class SendTrigger(Trigger, short_name='transmit'):
+class SendTrigger(Trigger, short_name='send'):
     """Trigger waiting for a successful sent message.
     """
-    ignore_fail: bool = False
+    max_count: int = 3
+    check: bool = False
 
     @failure_mode(fails=False)
     def ok(self) -> List[None]:
@@ -134,15 +127,14 @@ class SendTrigger(Trigger, short_name='transmit'):
         """
         return [None]
 
-    @failure_mode(requires=lambda self: self.ignore_fail)
+    @failure_mode(requires=lambda self: self.check)
     def no(self):
         """No message is sent.
         """
         return []
 
-    @property
-    def problems(self) -> List[str]:
-        if self.ignore_fail:
-            return ['Send state not checked']
-
-        return []
+    @failure_mode(requires=lambda self: self.max_count > 1)
+    def more(self):
+        """More messages are received than expected.
+        """
+        return [None] * self.max_count

@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, List, Optional
+from logging import info
+from typing import Any, List
 
 from .components import Transition
 from .components.mode import FailureMode
@@ -46,6 +47,9 @@ class TestStep:
         """
         return self.mode.arguments
 
+    def __str__(self):
+        return f'{self.transition.from_state.id} -> {self.transition.to_state.id} [{self.trigger.name}]; {self.mode.id}'
+
 
 @dataclass
 class TestCase:
@@ -79,6 +83,11 @@ class TestCase:
     def __eq__(self, other):
         return self.id == other.id
 
+    def __str__(self):
+        parts = [self.description]
+        parts += [f'- {s}' for s in self.steps]
+        return '\n'.join(parts)
+
 
 @dataclass
 class TestSuite:
@@ -92,6 +101,8 @@ class TestSuite:
         """
         cases = set()
 
+        info('Creating test suite')
+
         for transitions in graph.simple_edge_paths:
             working_steps = [
                 TestStep(transition, trigger=transition.default_trigger, mode=transition.default_trigger.ok)
@@ -99,10 +110,7 @@ class TestSuite:
             ]
 
             for i, transition in enumerate(transitions):
-                case = TestCase(steps=working_steps[:(i + 1)])
-                cases.add(case)
-
-                for trigger in transition.triggers:
+                for trigger in transition.triggers or [transition.default_trigger]:
                     for mode in trigger.failure_modes.values():
                         steps = working_steps[:i] + [TestStep(transition, trigger=trigger, mode=mode)]
                         case = TestCase(steps=steps)
@@ -110,7 +118,10 @@ class TestSuite:
 
         cases = sorted(cases, key=lambda o: o.priority)
 
+        info(f'Created {len(cases)} test cases:')
+        info('')
         for case in cases:
-            print(case.id)
+            info(case)
+            info('')
 
         return cls(cases)
