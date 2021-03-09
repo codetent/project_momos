@@ -61,5 +61,5 @@ PREPARE(RECEIVE, WAIT, receive)
 
 PREPARE(RECEIVE, WAIT, timeout)
 {
-    sleep(3 * FLOAT_ARG);
+    sleep(3 * INT_ARG);
 }
