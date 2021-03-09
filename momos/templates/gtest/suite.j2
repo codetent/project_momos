@@ -93,6 +93,9 @@ TEST_F(StateTest, {{ case.id }})
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
+    ::testing::InitGoogleMock(&argc, argv);
+
     ::testing::AddGlobalTestEnvironment(new StateEnv());
+
     return RUN_ALL_TESTS();
 }
