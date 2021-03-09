@@ -35,8 +35,9 @@ def include(flavor: str) -> None:
 
 @click.command('graph')
 @click.option('-i', '--input-file', type=click.Path(exists=False), required=True, help='Input source file')
-@click.option('-o', '--output-file', type=click.Path(), required=True, help='Generated dot file')
-def graph(input_file: str, output_file: str) -> None:
+@click.option('-o', '--output-file', type=click.Path(), required=True, help='Generated graph file')
+@click.option('--fmt', type=click.Choice(['dot', 'png']), default='dot', help='File format')
+def graph(input_file: str, output_file: str, fmt: str) -> None:
     """Generate dot image of graph from given input file.
     """
     input_file = Path(input_file)
@@ -48,7 +49,7 @@ def graph(input_file: str, output_file: str) -> None:
         click.echo(f'{input_file}:{ex.line} {ex.message}', err=True)
         return
     else:
-        graph.save(output_file)
+        graph.save(output_file, fmt=fmt)
 
 
 @click.command('analyze')

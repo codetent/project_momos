@@ -100,7 +100,7 @@ class StateGraph:
 
         raise ValueError('No transition found')
 
-    def save(self, path: Path) -> None:
+    def save(self, path: Path, fmt: str = 'dot') -> None:
         """Save graph to dot file.
         """
         graph = self.graph.copy()
@@ -109,7 +109,11 @@ class StateGraph:
         graph.add_edge('__initial__', self.initial_state)
 
         dot = to_pydot(graph)
-        dot.write_png(path)
+
+        if fmt == 'dot':
+            path.write_text(dot.to_string())
+        elif fmt == 'png':
+            dot.write_png(path)
 
     @classmethod
     def of(cls, items: Iterable[Union[State, Transition]]) -> StateGraph:
