@@ -75,7 +75,7 @@ TEST_F(StateTest, {{ case.id }})
     {
         WARN("Transition preparation undefined for {{ from_state.id }} -> {{ to_state.id }}");
     }
-    HOOK_RUN(progress);
+    HOOK_RUN(process);
     {% endfor %}
 
     {% if step.fails %}

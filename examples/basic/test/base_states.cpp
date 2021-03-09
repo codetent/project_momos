@@ -32,7 +32,7 @@ HOOK(before)
     states_init();
 }
 
-HOOK(progress)
+HOOK(process)
 {
     states_run();
 }
