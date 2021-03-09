@@ -99,7 +99,7 @@ class ReceiveTrigger(Trigger, short_name='receive'):
     def ok(self) -> List[None]:
         """Message is received as expected.
         """
-        return [None]
+        return [1]
 
     @failure_mode
     def no(self):
@@ -111,7 +111,7 @@ class ReceiveTrigger(Trigger, short_name='receive'):
     def more(self):
         """More messages are received than expected.
         """
-        return [None] * self.max_count
+        return list(range(1, self.max_count + 1))
 
 
 @dataclass
@@ -125,7 +125,7 @@ class SendTrigger(Trigger, short_name='send'):
     def ok(self) -> List[None]:
         """Message is sent as expected.
         """
-        return [None]
+        return [1]
 
     @failure_mode(requires=lambda self: self.check)
     def no(self):
@@ -137,4 +137,4 @@ class SendTrigger(Trigger, short_name='send'):
     def more(self):
         """More messages are received than expected.
         """
-        return [None] * self.max_count
+        return list(range(1, self.max_count + 1))
