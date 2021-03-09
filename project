@@ -18,6 +18,9 @@ test () {
 test_example () {
     cd ./examples/basic/
 
+    mkdir -p doc
+    poetry run momos graph -i src/states.c -o doc/states.png
+
     rm -f ./test/test_states.cpp
     poetry run cmake -B build .
     poetry run cmake --build build

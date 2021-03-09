@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 import networkx as nx
 from networkx.algorithms import shortest_path
-from networkx.drawing.nx_pydot import write_dot
+from networkx.drawing.nx_pydot import to_pydot
 from networkx.utils import pairwise
 
 from wrapt import ObjectProxy
@@ -78,17 +78,8 @@ class StateGraph:
     def add_state(self, state: State) -> None:
         """Add given state to graph.
         """
-        node_kwargs = {'shape': 'box', 'label': state.id}
-
-        if state.initial:
-            node_kwargs['shape'] = 'point'
-            node_kwargs['width'] = 0.5
-            node_kwargs['height'] = 0.5
-            node_kwargs['label'] = ''
-            node_kwargs['xlabel'] = state.id
-
         self.states.append(state)
-        self.graph.add_node(IdStrProxy(state), **node_kwargs)
+        self.graph.add_node(IdStrProxy(state), shape='box', label=state.id)
 
     def add_transition(self, transition: Transition) -> None:
         """Add given transition to graph.
@@ -112,7 +103,13 @@ class StateGraph:
     def save(self, path: Path) -> None:
         """Save graph to dot file.
         """
-        write_dot(self.graph, path)
+        graph = self.graph.copy()
+
+        graph.add_node('__initial__', shape='point', width=0.2, height=0.2)
+        graph.add_edge('__initial__', self.initial_state)
+
+        dot = to_pydot(graph)
+        dot.write_png(path)
 
     @classmethod
     def of(cls, items: Iterable[Union[State, Transition]]) -> StateGraph:
