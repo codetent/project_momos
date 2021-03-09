@@ -41,7 +41,7 @@ HOOK(progress)
 
 PREPARE(WAIT, SEND)
 {
-    sleep(2 * FLOAT_ARG);
+    sleep(2 * INT_ARG);
 }
 
 PREPARE(SEND, SEND_TIMESTAMP)

@@ -66,8 +66,8 @@ class DefaultTrigger(Trigger, short_name='default'):
 class TimeoutTrigger(Trigger, short_name='timeout'):
     """Trigger type which is coupled with a specified timeout.
     """
-    min_factor: float = 0.1
-    max_factor: float = 1.9
+    min_factor: int = 0
+    max_factor: int = 2
     operator: str = '>'
 
     @failure_mode(fails=False)
