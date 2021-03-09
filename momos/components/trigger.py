@@ -115,22 +115,3 @@ class ReceiveTrigger(Trigger, short_name='receive'):
         """More messages are received than expected.
         """
         return list(range(1, self.max_count + 1))
-
-
-@dataclass
-class SendTrigger(Trigger, short_name='send'):
-    """Trigger waiting for a successful sent message.
-    """
-    check: bool = False
-
-    @failure_mode(fails=False)
-    def ok(self) -> List[None]:
-        """Message is sent as expected.
-        """
-        return [1]
-
-    @failure_mode(requires=lambda self: self.check)
-    def no(self):
-        """No message is sent.
-        """
-        return []
