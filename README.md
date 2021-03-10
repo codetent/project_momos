@@ -4,8 +4,6 @@
 
 # Project Momos
 
-[Documentation](./doc/concept.md)
-
 ## Introduction
 
 TODO
