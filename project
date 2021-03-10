@@ -16,6 +16,8 @@ test () {
 }
 
 test_example () {
+    poetry install
+
     cd ./examples/basic/
 
     mkdir -p doc
