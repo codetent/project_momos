@@ -36,6 +36,10 @@ lint () {
     poetry run flake8 momos
 }
 
+publish () {
+    poetry publish -r testpypi
+}
+
 
 if [ $# -eq 0 ]
 then
