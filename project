@@ -37,7 +37,7 @@ lint () {
 }
 
 publish () {
-    poetry publish -r testpypi
+    poetry publish
 }
 
 
