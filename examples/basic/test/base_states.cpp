@@ -13,7 +13,7 @@ extern "C"
 
 using namespace ::testing;
 
-hal_mock hal_mock_obj;
+hal_mock *hal_mock_obj;
 
 /* --------------------------------- States --------------------------------- */
 
@@ -29,12 +29,19 @@ STATE_VAR(current_state);
 
 HOOK(before)
 {
+    hal_mock_obj = new hal_mock();
+
     states_init();
 }
 
 HOOK(process)
 {
     states_run();
+}
+
+HOOK(after)
+{
+    delete hal_mock_obj;
 }
 
 /* ------------------------------- Transitions ------------------------------ */
@@ -46,7 +53,7 @@ PREPARE(WAIT, SEND)
 
 PREPARE(SEND, SEND_TIMESTAMP)
 {
-    EXPECT_CALL(hal_mock_obj, transmit(42)).Times(1);
+    EXPECT_CALL(*hal_mock_obj, transmit(42)).Times(1);
 }
 
 PREPARE(RECEIVE, RECEIVE_TIMESTAMP)
