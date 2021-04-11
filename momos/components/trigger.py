@@ -56,7 +56,7 @@ class DefaultTrigger(Trigger, short_name='default'):
         return [None]
 
     @failure_mode
-    def no(self):
+    def no(self) -> List[None]:
         """Transition is not triggered.
         """
         return []
@@ -71,7 +71,7 @@ class TimeoutTrigger(Trigger, short_name='timeout'):
     operator: str = '>'
 
     @failure_mode(fails=False)
-    def ok(self) -> int:
+    def ok(self) -> List[int]:
         """Timeout matches expected value.
         """
         if not self.earlier.fails:
@@ -79,14 +79,20 @@ class TimeoutTrigger(Trigger, short_name='timeout'):
         else:
             return self.later.arguments
 
+    @failure_mode(fails=lambda self: '=' not in self.operator)
+    def exact(self) -> List[int]:
+        """Timeout at exact threshold.
+        """
+        return [1]
+
     @failure_mode(fails=lambda self: '>' in self.operator)
-    def earlier(self) -> int:
+    def earlier(self) -> List[int]:
         """Timeout less than expected.
         """
         return [self.min_factor]
 
     @failure_mode(fails=lambda self: '<' in self.operator)
-    def later(self) -> int:
+    def later(self) -> List[int]:
         """Timeout greater than expected.
         """
         return [self.max_factor]
@@ -99,19 +105,19 @@ class ReceiveTrigger(Trigger, short_name='receive'):
     max_count: int = 3
 
     @failure_mode(fails=False)
-    def ok(self) -> List[None]:
+    def ok(self) -> List[int]:
         """Message is received as expected.
         """
         return [1]
 
     @failure_mode
-    def no(self):
+    def no(self) -> List[int]:
         """No message is received.
         """
         return []
 
     @failure_mode(requires=lambda self: self.max_count > 1)
-    def more(self):
+    def more(self) -> List[int]:
         """More messages are received than expected.
         """
         return list(range(1, self.max_count + 1))

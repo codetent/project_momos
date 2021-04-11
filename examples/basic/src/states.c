@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <time.h>
 
 #include "hal.h"
 #include "messages.h"
@@ -15,13 +14,13 @@
 #define STATE_RECEIVE_TIMESTAMP 5U // @state RECEIVE_TIMESTAMP
 
 static uint8_t current_state;
-static time_t next_time;
+static uint32_t next_time;
 static bool received;
 static int received_msg;
 
 void states_init(void)
 {
-    next_time = time(0) + 2U;
+    next_time = current_time() + 2U;
     current_state = STATE_WAIT; // @transition . -> WAIT
     received = false;
     received_msg = 0U;
@@ -38,9 +37,9 @@ void states_run(void)
     switch (current_state)
     {
     case STATE_WAIT:
-        if (time(0) >= next_time)
+        if (current_time() >= next_time)
         {
-            current_state = STATE_SEND; // @transition WAIT -> SEND [timeout]
+            current_state = STATE_SEND; // @transition WAIT -> SEND [timeout, operator=">="]
         }
         break;
 
@@ -51,7 +50,7 @@ void states_run(void)
 
     case STATE_SEND_TIMESTAMP:
         current_state = STATE_RECEIVE; // @transition SEND_TIMESTAMP -> RECEIVE
-        next_time = time(0) + 2U;
+        next_time = current_time() + 2U;
         break;
 
     case STATE_RECEIVE:
@@ -68,9 +67,9 @@ void states_run(void)
                 current_state = STATE_WAIT; // @transition RECEIVE -> WAIT [receive#incorrect, max_count=1]
             }
         }
-        else if (time(0) > next_time)
+        else if (current_time() > next_time)
         {
-            next_time = time(0) + 2U;
+            next_time = current_time() + 2U;
             current_state = STATE_WAIT; // @transition RECEIVE -> WAIT [timeout]
         }
         break;
@@ -79,7 +78,7 @@ void states_run(void)
         // get receive timestamp
         if (true)
         {
-            next_time = time(0) + 2U;
+            next_time = current_time() + 2U;
             current_state = STATE_WAIT; // @transition RECEIVE_TIMESTAMP -> WAIT
         }
         break;

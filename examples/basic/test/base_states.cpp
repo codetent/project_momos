@@ -31,6 +31,9 @@ HOOK(before)
 {
     hal_mock_obj = new hal_mock();
 
+    EXPECT_CALL(*hal_mock_obj, current_time)
+        .WillOnce(Return(0));
+
     states_init();
 }
 
@@ -48,12 +51,20 @@ HOOK(after)
 
 PREPARE(WAIT, SEND)
 {
-    sleep(2 * INT_ARG);
+    EXPECT_CALL(*hal_mock_obj, current_time)
+        .WillOnce(Return(2 * INT_ARG));
 }
 
 PREPARE(SEND, SEND_TIMESTAMP)
 {
-    EXPECT_CALL(*hal_mock_obj, transmit(42)).Times(1);
+    EXPECT_CALL(*hal_mock_obj, transmit(42))
+        .Times(1);
+}
+
+PREPARE(SEND_TIMESTAMP, RECEIVE)
+{
+    EXPECT_CALL(*hal_mock_obj, current_time)
+        .WillOnce(Return(0));
 }
 
 PREPARE(RECEIVE, RECEIVE_TIMESTAMP)
@@ -68,5 +79,23 @@ PREPARE(RECEIVE, WAIT, receive)
 
 PREPARE(RECEIVE, WAIT, timeout)
 {
-    sleep(3 * INT_ARG);
+    uint32_t time = 2 * INT_ARG;
+
+    if (time > next_time)
+    {
+        EXPECT_CALL(*hal_mock_obj, current_time)
+            .WillOnce(Return(time))
+            .WillOnce(Return(time));
+    }
+    else
+    {
+        EXPECT_CALL(*hal_mock_obj, current_time)
+            .WillOnce(Return(time));
+    }
+}
+
+PREPARE(RECEIVE_TIMESTAMP, WAIT)
+{
+    EXPECT_CALL(*hal_mock_obj, current_time)
+        .WillOnce(Return(0));
 }
