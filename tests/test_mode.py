@@ -14,5 +14,5 @@ def test_decorator():
 
     t = T()
     t.failing | should.be_an_instance_of(FailureMode)
-    t.failing.results | should.be_empty()
+    t.failing.arguments | should.be_empty()
     t.failing.description | should.be_equal('foobar')

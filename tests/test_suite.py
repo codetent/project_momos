@@ -2,8 +2,7 @@ from pyshould import should, should_not
 
 from momos.components import State, Transition
 from momos.graph import StateGraph
-from momos.suite import TestSuite, get_simple_paths, get_transition
-from momos.utils import ExternalElement
+from momos.suite import TestSuite
 
 TestSuite.__test__ = False  # disable pytest collection
 
@@ -38,23 +37,26 @@ def _get_test_graph():
 def test_get_transition():
     graph, states, transitions = _get_test_graph()
 
-    get_transition(graph, states['init'], states['middle']) | should.be_equal(transitions[('init', 'middle')])
+    graph.get_transition(states['init'], states['middle']) | should.be_equal(transitions[('init', 'middle')])
 
 
 def test_get_simple_paths():
     graph, _, transitions = _get_test_graph()
 
-    paths = get_simple_paths(graph)
-    paths | should.have_length(3)
+    paths = graph.simple_edge_paths
+    paths | should.have_length(6)
+    paths | should.contain_the_item([transitions[('init', 'middle')]])
+    paths | should.contain_the_item([transitions[('init', 'middle')], transitions[('middle', 'last')]])
     paths | should.contain_the_item(
         [transitions[('init', 'middle')], transitions[('middle', 'last')], transitions[('last', 'init')]])
-    paths | should.contain_the_item(
-        [transitions[('init', 'other')], transitions[('other', 'last')], transitions[('last', 'init')]])
+    paths | should.contain_the_item([transitions[('init', 'other')]])
+    paths | should.contain_the_item([transitions[('init', 'other')], transitions[('other', 'last')]])
     paths | should.contain_the_item([transitions[('init', 'other')], transitions[('other', 'free')]])
+    #  init -> other -> last -> init: ignored, because last -> init is already tested
 
 
 def test_suite_of():
     graph, _, _ = _get_test_graph()
-    suite = TestSuite.of(graph, state_var=ExternalElement.of('state'), data_type=ExternalElement.of('int'))
+    suite = TestSuite.of(graph)
 
     suite.cases | should_not.be_empty()

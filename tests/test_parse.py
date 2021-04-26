@@ -30,4 +30,4 @@ def test_parse_basic():
     graph.transitions | should.have_length(1)
     graph.transitions[0].from_state.id | should.be_equal('A')
     graph.transitions[0].to_state.id | should.be_equal('B')
-    graph.transitions[0].trigger.id | should.be_none()
+    graph.transitions[0].triggers | should.be_empty()
