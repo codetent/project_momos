@@ -8,6 +8,7 @@ packages = [
     { include = "momos" },
 ]
 include = [
+    "README.md",
     ".lark",
     "libraries/*/*/*",
     "templates/*/*"
