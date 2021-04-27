@@ -60,3 +60,15 @@ def test_suite_of():
     suite = TestSuite.of(graph)
 
     suite.cases | should_not.be_empty()
+
+
+def test_suite_attrs():
+    graph, _, _ = _get_test_graph()
+    suite = TestSuite.of(graph)
+
+    suite.cases[0].description | should.be_a_string()
+    suite.cases[0].priority | should.be_greater_than(0)
+
+    suite.cases[0].steps[0].description | should.be_a_string()
+    suite.cases[0].steps[0].fails | should.be_a_boolean()
+    suite.cases[0].steps[0].arguments | should.be_a_list()

@@ -70,10 +70,6 @@ class TestCase:
         return len(self.steps)
 
     @property
-    def fails(self) -> bool:
-        return self.last_step.fails
-
-    @property
     def last_step(self):
         return self.steps[-1]
 

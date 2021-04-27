@@ -12,7 +12,7 @@ build () {
 
 test () {
     poetry install
-    poetry run pytest --cov=momos 
+    poetry run pytest --cov=momos --cov-report html
 }
 
 test_example () {

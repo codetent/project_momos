@@ -4,6 +4,7 @@ from logging import INFO, basicConfig
 from pathlib import Path
 
 import click
+from click import ClickException
 
 from .generator import CodeGenerator
 from .parser import ParseError, parse_file
@@ -27,8 +28,7 @@ def include(flavor: str) -> None:
     path = (Path(__file__).parent / 'libraries' / flavor).resolve()
 
     if not path.exists():
-        click.echo(f'Unknown flavor {flavor}', err=True)
-        return
+        raise ClickException(f'Unknown flavor "{flavor}"')
 
     click.echo((Path(__file__).parent / 'libraries' / flavor).resolve())
 
@@ -46,8 +46,7 @@ def graph(input_file: str, output_file: str, fmt: str) -> None:
     try:
         graph = parse_file(input_file)
     except ParseError as ex:
-        click.echo(f'{input_file}:{ex.line} {ex.message}', err=True)
-        return
+        raise ClickException(f'{input_file}:{ex.line} {ex.message}')
     else:
         graph.save(output_file, fmt=fmt)
 
@@ -93,8 +92,7 @@ def analyze(input_file: str) -> None:
     try:
         graph = parse_file(input_file)
     except ParseError as ex:
-        click.echo(f'{input_file}:{ex.line} {ex.message}', err=True)
-        return
+        raise ClickException(f'{input_file}:{ex.line} {ex.message}')
 
     check_states()
     click.echo()
@@ -119,8 +117,7 @@ def build(input_file: str, base_file: str, output_file: str, flavor: str) -> Non
     try:
         graph = parse_file(input_file)
     except ParseError as ex:
-        click.echo(f'{input_file}:{ex.line} {ex.message}', err=True)
-        return
+        raise ClickException(f'{input_file}:{ex.line} {ex.message}')
 
     suite = TestSuite.of(graph)
     generator = CodeGenerator(flavor=flavor)
