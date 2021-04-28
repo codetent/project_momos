@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import List
 
-from ..utils import Resolvable
 from .trigger import DefaultTrigger, Trigger
+from ..utils import Resolvable
 
 
 @dataclass(frozen=True)

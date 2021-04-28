@@ -8,7 +8,6 @@ import networkx as nx
 from networkx.algorithms import shortest_path
 from networkx.drawing.nx_pydot import to_pydot
 from networkx.utils import pairwise
-
 from wrapt import ObjectProxy
 
 from .components import State, Transition

@@ -117,7 +117,7 @@ def parse(text: str) -> StateGraph:
                 if ex.column > 1:
                     message = ex.args[0].split('at')[0]
                     raise ParseError(message=message, line=lineno)
-            except UnexpectedEOF as ex:
+            except UnexpectedEOF:
                 raise ParseError(message='Unexpected end', line=lineno)
 
     Resolvable.resolve_all(definitions)

@@ -33,7 +33,7 @@ test_example () {
 
 lint () {
     poetry install
-    poetry run flake8 momos
+    poetry run flake8 momos --ignore=B306
 }
 
 publish () {
