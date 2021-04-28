@@ -4,6 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PyPI version](https://badge.fury.io/py/momos.svg)](https://badge.fury.io/py/momos)
+![CI Test](https://github.com/codetent/project_momos/actions/workflows/python-package.yml/badge.svg)
 
 # Project Momos
 
