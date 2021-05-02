@@ -89,6 +89,7 @@ class TestCase:
 class TestSuite:
     """Test suite consisting out of several test cases.
     """
+
     cases: List[TestCase]
 
     @classmethod
