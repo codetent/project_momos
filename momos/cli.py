@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from functools import partial
 from http.server import SimpleHTTPRequestHandler
-from importlib import resources
 from logging import INFO, basicConfig
 from pathlib import Path
 from socketserver import TCPServer
@@ -111,7 +110,7 @@ def analyze(input_file: str) -> None:
 @click.option('-p', '--port', type=click.INT, default=9000, help='Port where inspector can be accessed')
 def inspector(port) -> None:
     class RequestHandler(SimpleHTTPRequestHandler):
-        def do_GET(self):
+        def do_GET(self):  # noqa: N802
             if self.path == '/':
                 self.path = '/index.html'
 
