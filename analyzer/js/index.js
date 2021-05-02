@@ -75,6 +75,24 @@ new Vue({
                 const testSuites = content.querySelector('testsuites');
                 const testCases = content.querySelectorAll('testcase');
 
+                if (!testSuites) {
+                    this.state.loadingReport = false;
+                    this.$q.notify({
+                        type: 'negative',
+                        message: 'Invalid file format.',
+                    });
+                    return;
+                }
+
+                if (!testSuites.hasAttribute('momos')) {
+                    this.state.loadingReport = false;
+                    this.$q.notify({
+                        type: 'negative',
+                        message: 'Invalid momos test report.',
+                    });
+                    return;
+                }
+
                 this.dot = testSuites.getAttribute('momos-state_graph').replace('{', '{ rankdir="LR"');
                 this.successCount = testCases.length;
 

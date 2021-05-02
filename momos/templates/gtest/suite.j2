@@ -114,6 +114,7 @@ int main(int argc, char **argv)
 
     ::testing::AddGlobalTestEnvironment(new StateEnv());
 
+    ::testing::Test::RecordProperty("momos", "true");
     ::testing::Test::RecordProperty("momos-state_graph", {{ graph.dot_graph.to_string() | tojson }});
 
     return RUN_ALL_TESTS();

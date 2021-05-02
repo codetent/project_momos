@@ -79,7 +79,7 @@ PREPARE(RECEIVE, WAIT, receive)
 
 PREPARE(RECEIVE, WAIT, timeout)
 {
-    uint32_t time = 2 * INT_ARG;
+    uint32_t time = 20 * INT_ARG;
 
     if (time > next_time)
     {
