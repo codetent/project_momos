@@ -54,7 +54,20 @@ protected:
 {% for case in suite.cases %}
 TEST_F(StateTest, {{ case.id }})
 {
+    {% set debug_index = counter() %}
+
     LOG("Description: {{ case.description }}");
+    RecordProperty("momos-id", "{{ case.id }}");
+    RecordProperty("momos-description", "{{ case.description }}");
+    RecordProperty("momos-priority", "{{ case.priority }}");
+
+    {% for step in case.steps %}
+    {% set from_state = step.transition.from_state %}
+    {% set to_state = step.transition.to_state %}
+
+    RecordProperty("momos-steps-{{ loop.index - 1 }}-from_state", "{{ from_state.id }}");
+    RecordProperty("momos-steps-{{ loop.index - 1 }}-to_state", "{{ to_state.id }}");
+    {% endfor %}
 
     {% for step in case.steps %}
     {% set from_state = step.transition.from_state %}
@@ -65,15 +78,18 @@ TEST_F(StateTest, {{ case.id }})
 
     // [Step {{ step_index }}]: {{ step.description }} ----------
     LOG("{{ from_state.id }} -> {{ to_state.id }} [{{ trigger.type }}]");
+    RecordProperty("momos-debug-{{ debug_index.next() }}", "{{ from_state.id }} -> {{ to_state.id }} [{{ trigger.type }}]");
 
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET({{ from_state.id }}));
 
     {% for arg in step.arguments %}
     {% set arg_name = 'arg_' ~ step_index ~ '_' ~ loop.index %}
     {{ get_type(arg) }} {{ arg_name }} = {{ arg | default('0', true) }};
+    RecordProperty("momos-debug-{{ debug_index.next() }}", "- Passing arg \"{{ arg }}\"");
     if (!PREPARE_RUN({{ from_state.id }}, {{ to_state.id }}, {{ step.trigger.name }}, {{ step.trigger.variant }}, &{{ arg_name }}))
     {
         WARN("Transition preparation undefined for {{ from_state.id }} -> {{ to_state.id }}");
+        RecordProperty("momos-debug-{{ debug_index.next() }}", "- Transition preparation undefined");
     }
     HOOK_RUN(process);
     {% endfor %}
@@ -84,6 +100,7 @@ TEST_F(StateTest, {{ case.id }})
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET({{ to_state.id }}));
     {% endif %}
 
+    RecordProperty("momos-steps-{{ step_index - 1 }}-success", "true");
     {% endfor %}
 }
 
@@ -96,6 +113,8 @@ int main(int argc, char **argv)
     ::testing::InitGoogleMock(&argc, argv);
 
     ::testing::AddGlobalTestEnvironment(new StateEnv());
+
+    ::testing::Test::RecordProperty("momos-state_graph", {{ graph.dot_graph.to_string() | tojson }});
 
     return RUN_ALL_TESTS();
 }

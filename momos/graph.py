@@ -74,6 +74,15 @@ class StateGraph:
 
         return tuple(paths)
 
+    @property
+    def dot_graph(self) -> str:
+        graph = self.graph.copy()
+
+        graph.add_node('__initial__', shape='point', width=0.2, height=0.2)
+        graph.add_edge('__initial__', self.initial_state)
+
+        return to_pydot(graph)
+
     def add_state(self, state: State) -> None:
         """Add given state to graph.
         """
@@ -102,17 +111,10 @@ class StateGraph:
     def save(self, path: Path, fmt: str = 'dot') -> None:
         """Save graph to dot file.
         """
-        graph = self.graph.copy()
-
-        graph.add_node('__initial__', shape='point', width=0.2, height=0.2)
-        graph.add_edge('__initial__', self.initial_state)
-
-        dot = to_pydot(graph)
-
         if fmt == 'dot':
-            path.write_text(dot.to_string())
+            path.write_text(self.dot_graph.to_string())
         elif fmt == 'png':
-            dot.write_png(path)
+            self.dot_graph.write_png(path)
 
     @classmethod
     def of(cls, items: Iterable[Union[State, Transition]]) -> StateGraph:

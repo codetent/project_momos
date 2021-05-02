@@ -121,7 +121,7 @@ def build(input_file: str, base_file: str, output_file: str, flavor: str) -> Non
 
     suite = TestSuite.of(graph)
     generator = CodeGenerator(flavor=flavor)
-    text = generator.generate(suite, includes=[base_file.relative_to(output_file.parent)])
+    text = generator.generate(suite, graph, includes=[base_file.relative_to(output_file.parent)])
     output_file.write_text(text)
 
 
