@@ -13,7 +13,8 @@ include = [
     ".lark",
     "doc/momos_header.svg",
     "libraries/*/*/*",
-    "templates/*/*"
+    "templates/*/*",
+    "inspector/*/*",
 ]
 
 [tool.poetry.dependencies]

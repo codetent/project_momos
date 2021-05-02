@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+from functools import partial
+from http.server import SimpleHTTPRequestHandler
+from importlib import resources
 from logging import INFO, basicConfig
 from pathlib import Path
+from socketserver import TCPServer
 
 import click
 from click import ClickException
 
+from . import inspector as inspector_pkg
 from .generator import CodeGenerator
 from .parser import ParseError, parse_file
 from .suite import TestSuite
@@ -102,6 +107,23 @@ def analyze(input_file: str) -> None:
     click.echo()
 
 
+@click.command('inspector')
+@click.option('-p', '--port', type=click.INT, default=9000, help='Port where inspector can be accessed')
+def inspector(port) -> None:
+    class RequestHandler(SimpleHTTPRequestHandler):
+        def do_GET(self):
+            if self.path == '/':
+                self.path = '/index.html'
+
+            return super().do_GET()
+
+    handler = partial(RequestHandler, directory=Path(inspector_pkg.__file__).parent)
+
+    with TCPServer(('', port), handler) as httpd:
+        print(f'Serving at http://localhost:{port}')
+        httpd.serve_forever()
+
+
 @click.command('build')
 @click.option('-i', '--input-file', type=click.Path(exists=False), required=True, help='Input source file')
 @click.option('-b', '--base-file', type=click.Path(exists=False), required=True, help='Base test file')
@@ -136,5 +158,6 @@ def run() -> None:
     main.add_command(include)
     main.add_command(build)
     main.add_command(analyze)
+    main.add_command(inspector)
     main.add_command(graph)
     main()
