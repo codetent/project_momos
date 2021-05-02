@@ -1,7 +1,11 @@
+/* Overrides */
+
 .bg-light,
 #report-selector .q-dialog__backdrop {
     background-color: var(--q-color-light);
 }
+
+/* General */
 
 [v-cloak] {
     display: none;

@@ -1,3 +1,4 @@
+// Quasar brand color configuration
 window.quasarConfig = {
     brand: {
         primary: '#009fe3',

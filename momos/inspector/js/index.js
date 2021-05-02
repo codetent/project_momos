@@ -1,3 +1,8 @@
+/**
+ * Convert snakecase string to camelcase.
+ * @param {string} str Snakecase string
+ * @returns Camelcase string
+ */
 function snakeToCamel(str) {
     return str.replace(
         /([-_][a-z])/g,
@@ -5,6 +10,7 @@ function snakeToCamel(str) {
             .replace('-', '')
             .replace('_', ''));
 }
+
 
 new Vue({
     el: '#q-app',
@@ -25,6 +31,10 @@ new Vue({
         };
     },
     methods: {
+        /**
+         * Colorize rendered dot graph regarding passed & failing transitions.
+         * @param {string} id Identifier of test case
+         */
         colorizeGraph: function (id) {
             const testCase = this.testCases.find((testCase) => testCase.id == id);
             const edges = this.$graph.selectAll('svg .edge')
@@ -44,6 +54,9 @@ new Vue({
         },
     },
     computed: {
+        /**
+         * Same as testCases but sorted by the set order key.
+         */
         sortedTestCases: function () {
             const orderKey = this.testCaseOrder.selected;
 
@@ -53,6 +66,9 @@ new Vue({
         }
     },
     watch: {
+        /**
+         * Render dot graph if new dot string is set.
+         */
         dot: function (val, oldVal) {
             this.$graph = d3.select('#graph');
             this.$graph.graphviz()
@@ -61,6 +77,9 @@ new Vue({
                 .renderDot(val);
         },
 
+        /**
+         * Read set file and process content.
+         */
         report: function (val, oldVal) {
             const reader = new FileReader();
 
