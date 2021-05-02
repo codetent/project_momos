@@ -1,0 +1,8 @@
+.bg-light,
+#report-selector .q-dialog__backdrop {
+    background-color: var(--q-color-light);
+}
+
+[v-cloak] {
+    display: none;
+}

@@ -1,0 +1,51 @@
+#graph svg {
+    width: 100%;
+    height: 100%;
+}
+
+#graph .node>polygon {
+    stroke: lightslategray;
+    stroke-width: 2px;
+}
+
+#graph .node>ellipse {
+    stroke: lightslategray;
+    fill: lightslategray;
+}
+
+#graph .node>text {
+    font-family: inherit;
+}
+
+#graph .edge>path {
+    stroke: lightslategray;
+    stroke-width: 2px;
+}
+
+#graph .edge>polygon {
+    fill: lightslategray;
+    stroke: lightslategray;
+}
+
+#graph .edge.success>path {
+    stroke: var(--q-color-positive);
+}
+
+#graph .edge.success>polygon {
+    fill: var(--q-color-positive);
+    stroke: var(--q-color-positive);
+}
+
+#graph .edge.failing>path {
+    stroke: var(--q-color-negative);
+}
+
+#graph .edge.failing>polygon {
+    fill: var(--q-color-negative);
+    stroke: var(--q-color-negative);
+}
+
+#graph .edge>text {
+    font-family: inherit;
+    font-weight: lighter;
+}

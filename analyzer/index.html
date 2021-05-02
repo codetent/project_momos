@@ -1,0 +1,150 @@
+<html>
+
+<head>
+    <title>momos - Test Analyzer</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet"
+        type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/quasar@1.14.5/dist/quasar.min.css" rel="stylesheet" type="text/css">
+
+    <link href="css/graph.css" rel="stylesheet" type="text/css">
+    <link href="css/index.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <div id="q-app" class="window-height" v-bind:class="{ hidden: (state.showingSelector || state.loadingReport) }"
+        v-cloak>
+        <q-layout view="hHh LpR fFf" container>
+            <q-header elevated>
+                <q-toolbar class="bg-light text-dark">
+                    <q-avatar>
+                        <img src="img/momos.svg"></img>
+                    </q-avatar>
+
+                    <q-toolbar-title>momos - Test Analyzer</q-toolbar-title>
+                </q-toolbar>
+            </q-header>
+
+            <q-page-container>
+                <q-page>
+                    <div class="column absolute-full">
+                        <div class="col col-4">
+                            <div id="graph" class="q-pa-xl flex justify-center fit"></div>
+                        </div>
+
+                        <div class="col col-auto q-px-md row items-baseline text-h6">
+                            <div class="col">
+                                <span>Test Runs:</span>
+                                <span class="text-grey-8">{{ successCount }}/{{ testCases.length }} passing</span>
+                            </div>
+
+                            <div class="col-2">
+                                <q-select v-model="testCaseOrder.selected" :options="testCaseOrder.available" outlined
+                                    dense label="Sort"></q-select>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <q-scroll-area>
+                                <div class="q-gutter-md q-pa-md">
+                                    <q-card v-for="testCase in sortedTestCases">
+                                        <q-item>
+                                            <q-item-section avatar>
+                                                <q-avatar :icon="testCase.success ? 'done' : 'close'"
+                                                    :color="testCase.success ? 'positive' : 'negative'"
+                                                    text-color="white" size="sm">
+                                                </q-avatar>
+                                            </q-item-section>
+
+                                            <q-item-section>
+                                                <q-item-label>{{ testCase.id }}</q-item-label>
+                                                <q-item-label caption>
+                                                    {{ testCase.description }}
+                                                </q-item-label>
+                                            </q-item-section>
+                                        </q-item>
+
+                                        <q-separator></q-separator>
+
+                                        <q-list bordered class="rounded-borders">
+                                            <q-expansion-item v-for="testStep in testCase.steps"
+                                                v-on:show="colorizeGraph(testCase.id)" class="bg-light">
+                                                <template v-slot:header>
+                                                    <q-item-section avatar>
+                                                        <q-icon :name="testStep.success ? 'done' : 'close'"
+                                                            :color="testStep.success ? 'positive' : 'negative'"
+                                                            size="sm">
+                                                        </q-icon>
+                                                    </q-item-section>
+
+                                                    <q-item-section>
+                                                        <div>
+                                                            <span>{{ testStep.fromState }}</span>
+                                                            <q-icon name="trending_flat" style="margin-bottom: 5px">
+                                                            </q-icon>
+                                                            <span>{{ testStep.toState }}</span>
+                                                        </div>
+                                                    </q-item-section>
+                                                </template>
+
+                                                <q-card>
+                                                    <q-card-section class="bg-dark text-grey-1">
+                                                        <div v-for="msg in testCase.debug"
+                                                            v-bind:class="{ 'text-weight-bold': msg && !msg.startsWith('-') }">
+                                                            {{ msg }}</div>
+                                                    </q-card-section>
+                                                </q-card>
+                                            </q-expansion-item>
+                                        </q-list>
+                                    </q-card>
+                                </div>
+                            </q-scroll-area>
+                        </div>
+                    </div>
+                </q-page>
+            </q-page-container>
+        </q-layout>
+
+        <q-dialog persistent v-model="state.showingSelector" id="report-selector" transition-show="none">
+            <q-card class="text-center" style="width: 350px">
+                <q-card-section>
+                    <div class="text-h6">Select Report</div>
+                </q-card-section>
+
+                <q-card-section>
+                    <q-avatar icon="file_upload" size="100px" color="primary" text-color="white"></q-avatar>
+                </q-card-section>
+
+                <q-card-section>
+                    Select a JUnit XML report generated by a momos test to analyze it further.
+                </q-card-section>
+
+                <q-card-section class="q-pt-none">
+                    <q-file dense outlined v-model="report" accept=".xml" label="Select file"></q-file>
+                </q-card-section>
+
+                <q-inner-loading :showing="state.loadingReport">
+                    <q-spinner size="50px" color="primary" />
+                </q-inner-loading>
+            </q-card>
+        </q-dialog>
+    </div>
+
+    <script src="js/config.js"></script>
+
+    <script src="https://unpkg.com/d3@6.7.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+    <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+
+    <script src="https://unpkg.com/object-path@0.11.5/index.js"></script>
+
+    <script src="https://unpkg.com/vue@2.6.12/dist/vue.js"></script>
+    <script src="https://unpkg.com/quasar@1.14.5/dist/quasar.umd.min.js"></script>
+
+    <script src="js/index.js"></script>
+
+</body>
+
+</html>
