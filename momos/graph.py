@@ -78,14 +78,14 @@ class StateGraph:
     def dot_graph(self) -> str:
         settings = {'fontname': 'helvetica'}
         pad = 2
-        
+
         graph = self.graph.copy()
         graph.graph['node'] = settings
         graph.graph['edge'] = settings
 
         graph.add_node('__initial__', shape='point', width=0.2, height=0.2)
         graph.add_edge('__initial__', self.initial_state)
-        
+
         # Pad labels
         for _, _, data in graph.edges.data():
             if 'label' in data and data['label']:
