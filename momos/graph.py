@@ -76,10 +76,20 @@ class StateGraph:
 
     @property
     def dot_graph(self) -> str:
+        settings = {'fontname': 'helvetica'}
+        pad = 2
+        
         graph = self.graph.copy()
+        graph.graph['node'] = settings
+        graph.graph['edge'] = settings
 
         graph.add_node('__initial__', shape='point', width=0.2, height=0.2)
         graph.add_edge('__initial__', self.initial_state)
+        
+        # Pad labels
+        for _, _, data in graph.edges.data():
+            if 'label' in data and data['label']:
+                data['label'] = ' ' * pad + data['label'] + ' ' * pad
 
         return to_pydot(graph)
 
@@ -111,10 +121,7 @@ class StateGraph:
     def save(self, path: Path, fmt: str = 'dot') -> None:
         """Save graph to dot file.
         """
-        if fmt == 'dot':
-            path.write_text(self.dot_graph.to_string())
-        elif fmt == 'png':
-            self.dot_graph.write_png(path)
+        self.dot_graph.write(path, format=fmt)
 
     @classmethod
     def of(cls, items: Iterable[Union[State, Transition]]) -> StateGraph:
