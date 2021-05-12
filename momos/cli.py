@@ -8,6 +8,7 @@ from socketserver import TCPServer
 
 import click
 from click import ClickException
+from pydot import Dot
 
 from . import inspector as inspector_pkg
 from .generator import CodeGenerator
@@ -40,7 +41,7 @@ def include(flavor: str) -> None:
 @click.command('graph')
 @click.option('-i', '--input-file', type=click.Path(exists=False), required=True, help='Input source file')
 @click.option('-o', '--output-file', type=click.Path(), required=True, help='Generated graph file')
-@click.option('--fmt', type=click.Choice(['dot', 'png']), default='dot', help='File format')
+@click.option('--fmt', type=click.Choice(Dot().formats), default='dot', help='File format')
 def graph(input_file: str, output_file: str, fmt: str) -> None:
     """Generate dot image of graph from given input file.
     """
