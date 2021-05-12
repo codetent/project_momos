@@ -27,9 +27,26 @@ class StateGraph:
     """Graph consisting of states and transitions.
     """
     def __init__(self) -> None:
-        self.graph = nx.DiGraph()
         self.states = []
         self.transitions = []
+
+    @property
+    def graph(self) -> nx.DiGraph:
+        """Get the underlying networkx graph.
+        """
+        graph = nx.DiGraph()
+
+        for state in self.states:
+            graph.add_node(IdStrProxy(state), shape='box', label=state.id)
+
+        for transition in self.transitions:
+            graph.add_edge(
+                IdStrProxy(transition.from_state),
+                IdStrProxy(transition.to_state),
+                label=' | '.join([t.type for t in transition.triggers]),
+            )
+
+        return graph
 
     @property
     def initial_state(self) -> Optional[State]:
@@ -93,22 +110,6 @@ class StateGraph:
 
         return to_pydot(graph)
 
-    def add_state(self, state: State) -> None:
-        """Add given state to graph.
-        """
-        self.states.append(state)
-        self.graph.add_node(IdStrProxy(state), shape='box', label=state.id)
-
-    def add_transition(self, transition: Transition) -> None:
-        """Add given transition to graph.
-        """
-        self.transitions.append(transition)
-        self.graph.add_edge(
-            IdStrProxy(transition.from_state),
-            IdStrProxy(transition.to_state),
-            label='|'.join([t.type for t in transition.triggers]),
-        )
-
     def get_transition(self, from_state: State, to_state: State) -> Transition:
         """Get transition from one state to another.
         """
@@ -134,12 +135,12 @@ class StateGraph:
 
         for item in items:
             if isinstance(item, State):
-                graph.add_state(item)
+                graph.states.append(item)
             elif isinstance(item, Transition):
                 try:
                     transition = graph.get_transition(item.from_state, item.to_state)
                 except ValueError:
-                    graph.add_transition(item)
+                    graph.transitions.append(item)
                 else:
                     transition.triggers += item.triggers
 

@@ -26,10 +26,10 @@ def _get_test_graph():
     }
 
     for state in states.values():
-        graph.add_state(state)
+        graph.states.append(state)
 
     for transition in transitions.values():
-        graph.add_transition(transition)
+        graph.transitions.append(transition)
 
     return graph, states, transitions
 
