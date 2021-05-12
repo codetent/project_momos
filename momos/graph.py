@@ -121,7 +121,10 @@ class StateGraph:
     def save(self, path: Path, fmt: str = 'dot') -> None:
         """Save graph to dot file.
         """
-        self.dot_graph.write(path, format=fmt)
+        if fmt == 'dot':
+            path.write_text(self.dot_graph.to_string())
+        else:
+            self.dot_graph.write(path, format=fmt)
 
     @classmethod
     def of(cls, items: Iterable[Union[State, Transition]]) -> StateGraph:
