@@ -15,3 +15,10 @@
 This project is an experimental approach for creating a tool for testing state machine based protocol implementations against the specification for uncovering structural issues.
 
 The tool is not limited by design to any programming language or testing framework but currently only integrates well with cmake and C/C++.
+
+## Documentation
+
+For a practical examples, see the `examples` folder.
+
+
+The other documentation can be found in the `doc` folder.
