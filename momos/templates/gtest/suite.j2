@@ -94,7 +94,7 @@ TEST_F(StateTest, {{ case.id }})
     HOOK_RUN(process);
     {% endfor %}
 
-    {% if step.fails %}
+    {% if step.fails and from_state != to_state %}
     ASSERT_NE(STATE_VAR_GET(), STATE_GET({{ to_state.id }}));
     {% else %}
     ASSERT_EQ(STATE_VAR_GET(), STATE_GET({{ to_state.id }}));

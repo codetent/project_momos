@@ -62,6 +62,10 @@ void states_run(void)
             {
                 current_state = STATE_RECEIVE_TIMESTAMP; // @transition RECEIVE -> RECEIVE_TIMESTAMP [receive#correct, max_count=1]
             }
+            else if (received_msg == 0)
+            {
+                current_state = STATE_RECEIVE; // @transition RECEIVE -> RECEIVE [receive#invalid, max_count=1]
+            }
             else
             {
                 current_state = STATE_WAIT; // @transition RECEIVE -> WAIT [receive#incorrect, max_count=1]

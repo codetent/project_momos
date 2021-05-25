@@ -72,9 +72,14 @@ PREPARE(RECEIVE, RECEIVE_TIMESTAMP)
     states_update(42);
 }
 
-PREPARE(RECEIVE, WAIT, receive)
+PREPARE(RECEIVE, RECEIVE)
 {
     states_update(0);
+}
+
+PREPARE(RECEIVE, WAIT, receive)
+{
+    states_update(24);
 }
 
 PREPARE(RECEIVE, WAIT, timeout)
