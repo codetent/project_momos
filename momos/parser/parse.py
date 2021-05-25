@@ -73,9 +73,6 @@ class GrammarTransformer(Transformer):
     def string(self, items) -> str:
         return str(items[0])
 
-    def character(self, items) -> str:
-        return str(items[0])
-
     def float(self, items) -> float:
         return float(items[0])
 
@@ -115,7 +112,11 @@ def parse(text: str) -> StateGraph:
                 definitions.append(element)
             except (UnexpectedCharacters, UnexpectedToken) as ex:
                 if ex.column > 1:
-                    message = ex.args[0].split('at')[0]
+                    try:
+                        message = ex.args[0].split('at')[0]
+                    except IndexError:
+                        message = 'Unexpected input'
+
                     raise ParseError(message=message, line=lineno)
             except UnexpectedEOF:
                 raise ParseError(message='Unexpected end', line=lineno)

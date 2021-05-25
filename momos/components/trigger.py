@@ -68,7 +68,7 @@ class TimeoutTrigger(Trigger, short_name='timeout'):
     """
     min_factor: int = 0
     max_factor: int = 2
-    operator: str = '>'
+    operator: str = 'g'
 
     @failure_mode(fails=False)
     def ok(self) -> List[int]:
@@ -79,19 +79,19 @@ class TimeoutTrigger(Trigger, short_name='timeout'):
         else:
             return self.later.arguments
 
-    @failure_mode(fails=lambda self: '=' not in self.operator)
+    @failure_mode(fails=lambda self: 'e' not in self.operator)
     def exact(self) -> List[int]:
         """Timeout at exact threshold.
         """
         return [1]
 
-    @failure_mode(fails=lambda self: '>' in self.operator)
+    @failure_mode(fails=lambda self: 'g' in self.operator)
     def earlier(self) -> List[int]:
         """Timeout less than expected.
         """
         return [self.min_factor]
 
-    @failure_mode(fails=lambda self: '<' in self.operator)
+    @failure_mode(fails=lambda self: 'l' in self.operator)
     def later(self) -> List[int]:
         """Timeout greater than expected.
         """

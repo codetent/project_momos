@@ -11,17 +11,15 @@ option        : flag | pair
 pair          : identifier "=" literal
 flag          : NOT? NAME
 
-?literal      : flag | integer | float | character | string
+?literal      : integer | float | string
 implicit      : "."
 identifier    : NAME
-string        : "\"" STRING "\""
-character     : "'" CHAR "'"
+string        : STRING
 float         : SIGNED_FLOAT
 integer       : SIGNED_INT
 
 NOT           : "!"
-STRING         : /[\x21\x23-\x7E]+/
-CHAR           : /[\x21-\x26\x28-\x7E]/
+STRING        : /[\x21\x23-\x26\x28-\x2B\x2D-\x3B\x3E-\x5A\x5C\x5E-\x7E]+/
 
 %import python.NAME
 
